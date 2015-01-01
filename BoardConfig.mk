@@ -5,12 +5,14 @@
 TARGET_BUILD_VARIANT := userdebug
 
 #GCC
-TARGET_GCC_VERSION_EXP := 4.7
-TARGET_KERNEL_CUSTOM_TOOLCHAIN := arm-eabi-4.8
+#TARGET_GCC_VERSION_EXP := 4.7
+#TARGET_KERNEL_CUSTOM_TOOLCHAIN := arm-eabi-4.8
 
 # Skip droiddoc build to save build time
 BOARD_SKIP_ANDROID_DOC_BUILD := true
 DISABLE_DROIDDOC := true
+
+TARGET_SPECIFIC_HEADER_PATH := device/lge/p880/include
 
 # Board nameing
 TARGET_NO_RADIOIMAGE := true
@@ -18,49 +20,49 @@ TARGET_BOARD_PLATFORM := tegra
 TARGET_BOOTLOADER_BOARD_NAME := x3
 
 # Target arch settings
+TARGET_ARCH := arm
 TARGET_NO_BOOTLOADER := true
 TARGET_CPU_ABI := armeabi-v7a
 TARGET_CPU_ABI2 := armeabi
 TARGET_CPU_VARIANT := cortex-a9
 TARGET_ARCH_VARIANT := armv7-a-neon
 TARGET_ARCH_VARIANT_CPU := $(TARGET_CPU_VARIANT)
-TARGET_CPU_SMP := true
 ARCH_ARM_HAVE_TLS_REGISTER := true
 ARCH_ARM_HAVE_32_BYTE_CACHE_LINE := true
 ARCH_ARM_USE_NON_NEON_MEMCPY := true
-TARGET_ARCH := arm
 
-BOARD_KERNEL_CMDLINE := 
+# Images
+BOARD_BOOTIMAGE_PARTITION_SIZE := 10485760 # 10M
+BOARD_RECOVERYIMAGE_PARTITION_SIZE := 10485760 # 10M
+BOARD_SYSTEMIMAGE_PARTITION_SIZE := 1610612736 # 1.5GB
+BOARD_USERDATAIMAGE_PARTITION_SIZE := 13375635456 # 12.3GB
+BOARD_FLASH_BLOCK_SIZE := 4096
+BOARD_HAS_LARGE_FILESYSTEM := true
+TARGET_USERIMAGES_USE_EXT4 := true
+
+# Build the kernel
+BOARD_KERNEL_CMDLINE := androidboot.selinux=permissive
 BOARD_KERNEL_BASE := 0x10000000
 BOARD_KERNEL_PAGESIZE := 2048
 
-# fix this up by examining /proc/mtd on a running device
-BOARD_BOOTIMAGE_PARTITION_SIZE := 16777216
-BOARD_RECOVERYIMAGE_PARTITION_SIZE := 16777216
-BOARD_SYSTEMIMAGE_PARTITION_SIZE := 1056859750
-BOARD_USERDATAIMAGE_PARTITION_SIZE := 13164074762
-BOARD_FLASH_BLOCK_SIZE := 131072
-BOARD_HAS_LARGE_FILESYSTEM := true
-
-TARGET_RECOVERY_PRE_COMMAND := "/system/bin/setup-recovery"
-
-# Try to build the kernel
+ifeq ($(TARGET_BUILD_VARIANT),user)
+TARGET_KERNEL_CONFIG := cyanogenmod_x3-light_defconfig
+else
 TARGET_KERNEL_CONFIG := cyanogenmod_x3_defconfig
-#TARGET_KERNEL_CONFIG := cyanogenmod_x3-light_defconfig
+endif
 
+# Recovery
 BOARD_HAS_NO_SELECT_BUTTON := true
+BOARD_RECOVERY_SWIPE := true
 TARGET_RECOVERY_FSTAB = device/lge/p880/fstab.x3
 RECOVERY_FSTAB_VERSION = 2
-TARGET_USERIMAGES_USE_EXT4 := true
+TARGET_RECOVERY_PRE_COMMAND := "/system/bin/setup-recovery"
+BOARD_CUSTOM_GRAPHICS := ../../../device/lge/p880/recovery-gfx.c
+BOARD_CUSTOM_RECOVERY_KEYMAPPING := ../../device/lge/p880/recovery-keys.c
 
-TARGET_SPECIFIC_HEADER_PATH := device/lge/p880/include
-
+# Egl
 BOARD_EGL_CFG := device/lge/p880/egl.cfg
 USE_OPENGL_RENDERER := true
-BOARD_EGL_WORKAROUND_BUG_10194508 := true
-TARGET_RUNNING_WITHOUT_SYNC_FRAMEWORK := true
-BOARD_USE_MHEAP_SCREENSHOT := true
-BOARD_EGL_SKIP_FIRST_DEQUEUE := true
 
 # Wifi related defines
 WPA_SUPPLICANT_VERSION := VER_0_8_X
@@ -74,24 +76,39 @@ WIFI_DRIVER_FW_PATH_STA := "/system/vendor/firmware/fw_bcmdhd.bin"
 WIFI_DRIVER_FW_PATH_P2P := "/system/vendor/firmware/fw_bcmdhd.bin"
 WIFI_DRIVER_FW_PATH_AP := "/system/vendor/firmware/fw_bcmdhd_apsta.bin"
 
-TARGET_BOOTANIMATION_PRELOAD := true
-TARGET_BOOTANIMATION_TEXTURE_CACHE := true
-
+# Bluetooth
 BOARD_HAVE_BLUETOOTH := true
 BOARD_HAVE_BLUETOOTH_BCM := true
 BOARD_BLUEDROID_VENDOR_CONF := device/lge/p880/bluetooth/vnd_bt.txt
 BOARD_BLUETOOTH_BDROID_BUILDCFG_INCLUDE_DIR := device/lge/p880/bluetooth
 
+# Flags
 COMMON_GLOBAL_CFLAGS += -DMR0_AUDIO_BLOB -DMR0_CAMERA_BLOB -DNEEDS_VECTORIMPL_SYMBOLS
+COMMON_GLOBAL_CFLAGS += -DSK_SUPPORT_LEGACY_DECODEFILE
 
-# Enable various prefetch optimizations
+# Enable various build optimizations
 COMMON_GLOBAL_CFLAGS += -D__ARM_USE_PLD -D__ARM_CACHE_LINE_SIZE=32
+TARGET_GLOBAL_CFLAGS += -mtune=cortex-a9 -mfpu=neon -mfloat-abi=softfp
+TARGET_GLOBAL_CPPFLAGS += -mtune=cortex-a9 -mfpu=neon -mfloat-abi=softfp
 
-# Enable support for PCM offload and 24-bit playback with no extra dependencies
-TARGET_ENABLE_OFFLOAD_ENHANCEMENTS := true
-
+# Kitkat
 BOARD_HAVE_PRE_KITKAT_AUDIO_BLOB := true
 BOARD_HAVE_PRE_KITKAT_AUDIO_POLICY_BLOB := true
+BOARD_EGL_WORKAROUND_BUG_10194508 := true
+TARGET_RUNNING_WITHOUT_SYNC_FRAMEWORK := true
+BOARD_USE_MHEAP_SCREENSHOT := true
+BOARD_EGL_SKIP_FIRST_DEQUEUE := true
+BOARD_EGL_NEEDS_FNW := true
+
+# Lollipop
+USE_LEGACY_AUDIO_POLICY := 1
+BOARD_USES_LEGACY_MMAP := true
+MALLOC_IMPL := dlmalloc
+COMMON_GLOBAL_CFLAGS += -DADD_LEGACY_ACQUIRE_BUFFER_SYMBOL
+COMMON_GLOBAL_CFLAGS += -DADD_LEGACY_MEMORY_DEALER_CONSTRUCTOR_SYMBOL
+COMMON_GLOBAL_CFLAGS += -DREFBASE_JB_MR1_COMPAT_SYMBOLS
+COMMON_GLOBAL_CFLAGS += -DADD_LEGACY_SET_POSITION_SYMBOL
+TARGET_NEEDS_NON_PIE_SUPPORT := true
 
 ## Radio fixes
 BOARD_RIL_CLASS := ../../../device/lge/p880/ril/
@@ -99,18 +116,36 @@ BOARD_RIL_CLASS := ../../../device/lge/p880/ril/
 # Override healthd HAL
 BOARD_HAL_STATIC_LIBRARIES := libhealthd.x3
 
-BOARD_CUSTOM_GRAPHICS := ../../../device/lge/p880/recovery-gfx.c
-BOARD_CUSTOM_RECOVERY_KEYMAPPING := ../../device/lge/p880/recovery-keys.c
+# Misc
 BOARD_CHARGER_ENABLE_SUSPEND := true
 BOARD_BATTERY_DEVICE_NAME := battery
 
-BOARD_SEPOLICY_DIRS := \
+TARGET_BOOTANIMATION_PRELOAD := true
+TARGET_BOOTANIMATION_TEXTURE_CACHE := true
+
+BOARD_SEPOLICY_DIRS += \
     device/lge/p880/selinux
 
-BOARD_SEPOLICY_UNION := \
-    file_contexts \
-    file.te \
-    device.te \
-    domain.te
+BOARD_SEPOLICY_UNION += \
+        file_contexts \
+        genfs_contexts \
+        bluetooth.te \
+        device.te \
+        domain.te \
+        drmserver.te \
+        init_shell.te \
+        file.te \
+        gpsd.te \
+        keystore.te \
+        lmkd.te \
+        mediaserver.te \
+        recovery.te \
+        rild.te \
+        sensors_config.te \
+        surfaceflinger.te \
+        system_app.te \
+        system_server.te \
+        ueventd.te \
+        vold.te
 
 BOARD_HARDWARE_CLASS := device/lge/p880/cmhw/

@@ -1,0 +1,61 @@
+From 0cf6b3818168b836b031e8b30c70ff14eec1655c Mon Sep 17 00:00:00 2001
+From: alfsamsung <alfsamsung@hotmail.com>
+Date: Wed, 31 Dec 2014 19:48:03 +0100
+Subject: [PATCH] libgui: Addb back getDisplayInfo for old MR0_CAMERA_BLOB
+
+---
+ include/gui/SurfaceComposerClient.h |  2 ++
+ libs/gui/SurfaceComposerClient.cpp  | 10 ++++++++--
+ 2 files changed, 10 insertions(+), 2 deletions(-)
+
+diff --git a/include/gui/SurfaceComposerClient.h b/include/gui/SurfaceComposerClient.h
+index b4653d5..b9569ef 100644
+--- a/include/gui/SurfaceComposerClient.h
++++ b/include/gui/SurfaceComposerClient.h
+@@ -89,6 +89,8 @@ public:
+     static void setDisplayPowerMode(const sp<IBinder>& display, int mode);
+ 
+ #if defined(ICS_CAMERA_BLOB) || defined(MR0_CAMERA_BLOB)
++    static status_t getDisplayInfo(int32_t displayId, DisplayInfo* info);
++    
+     static ssize_t getDisplayWidth(int32_t displayId);
+     static ssize_t getDisplayHeight(int32_t displayId);
+     static ssize_t getDisplayOrientation(int32_t displayId);
+diff --git a/libs/gui/SurfaceComposerClient.cpp b/libs/gui/SurfaceComposerClient.cpp
+index d743d40..15e3131 100644
+--- a/libs/gui/SurfaceComposerClient.cpp
++++ b/libs/gui/SurfaceComposerClient.cpp
+@@ -427,7 +427,7 @@ void Composer::setDisplayProjection(const sp<IBinder>& token,
+     s.viewport = layerStackRect;
+     s.frame = displayRect;
+     s.what |= DisplayState::eDisplayProjectionChanged;
+-    mForceSynchronous = true; // TODO: do we actually still need this?
++//    mForceSynchronous = true; // TODO: do we actually still need this?
+ }
+ 
+ void Composer::setDisplaySize(const sp<IBinder>& token, uint32_t width, uint32_t height) {
+@@ -443,7 +443,7 @@ status_t Composer::setOrientation(int orientation) {
+     sp<IBinder> token(sm->getBuiltInDisplay(ISurfaceComposer::eDisplayIdMain));
+     DisplayState& s(getDisplayStateLocked(token));
+     s.orientation = orientation;
+-    mForceSynchronous = true; // TODO: do we actually still need this?
++//    mForceSynchronous = true; // TODO: do we actually still need this?
+     return NO_ERROR;
+ }
+ 
+@@ -724,6 +724,12 @@ status_t SurfaceComposerClient::getAnimationFrameStats(FrameStats* outStats) {
+ }
+ 
+ #if defined(ICS_CAMERA_BLOB) || defined(MR0_CAMERA_BLOB)
++status_t SurfaceComposerClient::getDisplayInfo(
++        int32_t displayId, DisplayInfo* info)
++{
++    return getDisplayInfo(getBuiltInDisplay(displayId), info);
++}
++
+ ssize_t SurfaceComposerClient::getDisplayWidth(int32_t displayId) {
+     DisplayInfo info;
+     getDisplayInfo(getBuiltInDisplay(displayId), &info);
+-- 
+1.9.1
+

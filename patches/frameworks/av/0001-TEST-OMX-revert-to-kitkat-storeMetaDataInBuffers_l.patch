@@ -1,0 +1,99 @@
+From dac65dc8302480df137b487e08c53e3ec6b1597b Mon Sep 17 00:00:00 2001
+From: alfsamsung <alfsamsung@hotmail.com>
+Date: Mon, 29 Dec 2014 19:47:02 +0100
+Subject: [PATCH] TEST OMX:revert to kitkat storeMetaDataInBuffers_l
+
+---
+ media/libstagefright/include/OMXNodeInstance.h |  8 ++++---
+ media/libstagefright/omx/OMXNodeInstance.cpp   | 33 ++++++--------------------
+ 2 files changed, 12 insertions(+), 29 deletions(-)
+
+diff --git a/media/libstagefright/include/OMXNodeInstance.h b/media/libstagefright/include/OMXNodeInstance.h
+index 24d431c..b135e3d 100644
+--- a/media/libstagefright/include/OMXNodeInstance.h
++++ b/media/libstagefright/include/OMXNodeInstance.h
+@@ -182,10 +182,12 @@ private:
+             OMX_IN OMX_PTR pAppData,
+             OMX_IN OMX_BUFFERHEADERTYPE *pBuffer);
+ 
+-    status_t storeMetaDataInBuffers_l(
+-            OMX_U32 portIndex, OMX_BOOL enable,
+-            OMX_BOOL useGraphicBuffer, OMX_BOOL *usingGraphicBufferInMeta);
++//    status_t storeMetaDataInBuffers_l(
++//            OMX_U32 portIndex, OMX_BOOL enable,
++//            OMX_BOOL useGraphicBuffer, OMX_BOOL *usingGraphicBufferInMeta);
+ 
++    status_t storeMetaDataInBuffers_l(OMX_U32 portIndex, OMX_BOOL enable);
++    
+     sp<GraphicBufferSource> getGraphicBufferSource();
+     void setGraphicBufferSource(const sp<GraphicBufferSource>& bufferSource);
+ 
+diff --git a/media/libstagefright/omx/OMXNodeInstance.cpp b/media/libstagefright/omx/OMXNodeInstance.cpp
+index 8c22255..0fcb0d2 100644
+--- a/media/libstagefright/omx/OMXNodeInstance.cpp
++++ b/media/libstagefright/omx/OMXNodeInstance.cpp
+@@ -401,36 +401,20 @@ status_t OMXNodeInstance::storeMetaDataInBuffers(
+         OMX_U32 portIndex,
+         OMX_BOOL enable) {
+     Mutex::Autolock autolock(mLock);
+-    return storeMetaDataInBuffers_l(
+-            portIndex, enable,
+-            OMX_FALSE /* useGraphicBuffer */, NULL /* usingGraphicBufferInMetadata */);
++//    return storeMetaDataInBuffers_l(
++//            portIndex, enable,
++//            OMX_FALSE /* useGraphicBuffer */, NULL /* usingGraphicBufferInMetadata */);
++      return storeMetaDataInBuffers_l(portIndex, enable);
+ }
+ 
+ status_t OMXNodeInstance::storeMetaDataInBuffers_l(
+         OMX_U32 portIndex,
+-        OMX_BOOL enable,
+-        OMX_BOOL useGraphicBuffer,
+-        OMX_BOOL *usingGraphicBufferInMetadata) {
++        OMX_BOOL enable) {
+     OMX_INDEXTYPE index;
+     OMX_STRING name = const_cast<OMX_STRING>(
+             "OMX.google.android.index.storeMetaDataInBuffers");
+ 
+-    OMX_STRING graphicBufferName = const_cast<OMX_STRING>(
+-            "OMX.google.android.index.storeGraphicBufferInMetaData");
+-    if (usingGraphicBufferInMetadata == NULL) {
+-        usingGraphicBufferInMetadata = &useGraphicBuffer;
+-    }
+-
+-    OMX_ERRORTYPE err =
+-        (useGraphicBuffer && portIndex == kPortIndexInput)
+-                ? OMX_GetExtensionIndex(mHandle, graphicBufferName, &index)
+-                : OMX_ErrorBadParameter;
+-    if (err == OMX_ErrorNone) {
+-        *usingGraphicBufferInMetadata = OMX_TRUE;
+-    } else {
+-        *usingGraphicBufferInMetadata = OMX_FALSE;
+-        err = OMX_GetExtensionIndex(mHandle, name, &index);
+-    }
++    OMX_ERRORTYPE err = OMX_GetExtensionIndex(mHandle, name, &index);
+ 
+     if (err != OMX_ErrorNone) {
+         ALOGE("OMX_GetExtensionIndex %s failed", name);
+@@ -448,7 +432,6 @@ status_t OMXNodeInstance::storeMetaDataInBuffers_l(
+     params.bStoreMetaData = enable;
+     if ((err = OMX_SetParameter(mHandle, index, &params)) != OMX_ErrorNone) {
+         ALOGE("OMX_SetParameter() failed for StoreMetaDataInBuffers: 0x%08x", err);
+-        *usingGraphicBufferInMetadata = OMX_FALSE;
+         return UNKNOWN_ERROR;
+     }
+     return err;
+@@ -712,9 +695,7 @@ status_t OMXNodeInstance::createInputSurface(
+ 
+     // Input buffers will hold meta-data (gralloc references).
+     OMX_BOOL usingGraphicBuffer = OMX_FALSE;
+-    err = storeMetaDataInBuffers_l(
+-            portIndex, OMX_TRUE,
+-            OMX_TRUE /* useGraphicBuffer */, &usingGraphicBuffer);
++    err = storeMetaDataInBuffers_l(portIndex, OMX_TRUE);
+     if (err != OK) {
+         return err;
+     }
+-- 
+1.9.1
+

@@ -1,0 +1,55 @@
+From 3d0f73bde5fab3bd578a86241d5ebe8a950948ec Mon Sep 17 00:00:00 2001
+From: codeworkx <codeworkx@cyanogenmod.org>
+Date: Sat, 27 Jul 2013 08:18:42 +0200
+Subject: [PATCH] libutils: refbase: jellybean mr1 compat
+
+[mikeioannina]: Update for L
+Can be enabled with global cflag REFBASE_JB_MR1_COMPAT_SYMBOLS
+
+Change-Id: Ideee0c3814a17b47f70fd612d27067fe19ae698d
+---
+ include/utils/RefBase.h | 9 +++++++++
+ libutils/RefBase.cpp    | 7 +++++++
+ 2 files changed, 16 insertions(+)
+
+diff --git a/include/utils/RefBase.h b/include/utils/RefBase.h
+index 8e15c19..5afdf92 100644
+--- a/include/utils/RefBase.h
++++ b/include/utils/RefBase.h
+@@ -53,6 +53,15 @@ inline bool operator _op_ (const U* o) const {                  \
+ 
+ // ---------------------------------------------------------------------------
+ 
++#ifdef REFBASE_JB_MR1_COMPAT_SYMBOLS
++class ReferenceConverterBase {
++public:
++    virtual size_t getReferenceTypeSize() const = 0;
++    virtual void* getReferenceBase(void const*) const = 0;
++    inline virtual ~ReferenceConverterBase() { }
++};
++#endif
++
+ class ReferenceRenamer {
+ protected:
+     // destructor is purposedly not virtual so we avoid code overhead from
+diff --git a/libutils/RefBase.cpp b/libutils/RefBase.cpp
+index 02907ad..b0ca12e 100644
+--- a/libutils/RefBase.cpp
++++ b/libutils/RefBase.cpp
+@@ -630,6 +630,13 @@ void RefBase::onLastWeakRef(const void* /*id*/)
+ 
+ // ---------------------------------------------------------------------------
+ 
++#ifdef REFBASE_JB_MR1_COMPAT_SYMBOLS
++extern "C" void _ZN7android7RefBase14moveReferencesEPvPKvjRKNS_22ReferenceConverterBaseE(void* /*dst*/, void const* /*src*/, size_t /*n*/,
++        const ReferenceConverterBase& /*caster*/)
++{
++}
++#endif
++
+ #if DEBUG_REFS
+ void RefBase::renameRefs(size_t n, const ReferenceRenamer& renamer) {
+     for (size_t i=0 ; i<n ; i++) {
+-- 
+1.9.1
+
