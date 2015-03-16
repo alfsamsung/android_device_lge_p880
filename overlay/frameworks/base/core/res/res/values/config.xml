@@ -274,4 +274,8 @@
     <string-array name="config_usbHostBlacklist" translatable="false">
         <item>/dev/bus/usb/001</item>
     </string-array>
+
+    <!-- Performance profiles -->
+    <string name="config_perf_profile_prop">sys.perf.profile</string>
+    <string name="config_perf_profile_default_entry">1</string>
 </resources>
