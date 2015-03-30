@@ -37,5 +37,13 @@
 
     <!-- Whether to enable data switch or not -->
     <bool name="config_enableDataSwitch">true</bool>
+
+<!--TEST--> 
+    <!-- Doze: does this device support STATE_DOZE and STATE_DOZE_SUSPEND? -->
+    <bool name="doze_display_state_supported">true</bool>
+    <bool name="doze_pulse_on_pick_up">true</bool>
+    
+    <!-- Doze: shake accelerometer threshold minimum is 2 and maximum is 10-->
+    <integer name="doze_shake_accelerometer_threshold">10</integer>
 </resources>
  

@@ -154,12 +154,22 @@
     * The device must be provisioned with HDCP keys (for protected content).
     -->
     <bool name="config_enableWifiDisplay">true</bool>
+    
+    <!-- Boolean indicating whether Softap requires reloading AP firmware -->
+    <bool name="config_wifiApFirmwareReload">false</bool>
 
     <!-- Indicate whether the SD card is accessible without removing the battery. -->
     <bool name="config_batterySdCardAccessibility">true</bool>
 
     <!-- Boolean indicating if current platform supports BLE peripheral mode -->
     <bool name="config_bluetooth_le_peripheral_mode_supported">true</bool>
+
+    <!-- When true use the linux /dev/input/event subsystem to detect the switch changes
+         on the headphone/microphone jack. When false use the older uevent framework. -->
+    <bool name="config_useDevInputEventForAudioJack">true</bool>
+
+    <!--SIM does not save, but the voice mail number to be changed. -->
+    <bool name="editable_voicemailnumber">true</bool>
 
     <!-- Minimum screen brightness allowed by the power manager. -->
     <integer name="config_screenBrightnessDim">1</integer>
@@ -181,13 +191,17 @@
     <integer-array name="config_autoBrightnessLevels">
         <item>2</item>
         <item>5</item>
-        <item>36</item>
-        <item>315</item>
-        <item>540</item>
-        <item>900</item>
-        <item>1440</item>
-        <item>2700</item>
-        <item>9000</item>
+        <item>20</item>
+        <item>50</item>
+        <item>100</item>
+        <item>200</item>
+        <item>400</item>
+        <item>650</item>
+        <item>1000</item>
+        <item>2000</item>
+        <item>3500</item>
+        <item>5000</item>
+        <item>10000</item>
     </integer-array>
 
     <!-- Array of output values for LCD backlight corresponding to the LUX values
@@ -196,15 +210,19 @@
          This must be overridden in platform specific overlays -->
     <integer-array name="config_autoBrightnessLcdBacklightValues">
         <item>5</item>    <!-- 0-2 -->
-        <item>26</item>   <!-- 2-5 -->
-        <item>73</item>   <!-- 5-36 -->
-        <item>88</item>   <!-- 36-315 -->
-        <item>130</item>  <!-- 315-540 -->
-        <item>167</item>  <!-- 540-900 -->
-        <item>204</item>  <!-- 900-1440 -->
-        <item>240</item>  <!-- 1440-2700 -->
-        <item>254</item>  <!-- 2700-9000 -->
-        <item>255</item>  <!-- 9000+ -->
+        <item>25</item> <!-- 2-5 -->
+        <item>32</item> <!-- 5-20 -->
+        <item>41</item> <!-- 20-50 -->
+        <item>52</item> <!-- 50-100 -->
+        <item>62</item> <!-- 100-200 -->
+        <item>69</item> <!-- 200-400 -->
+        <item>78</item> <!-- 400-650 -->
+        <item>88</item> <!-- 650-1000 -->
+        <item>134</item> <!-- 1000-2000 -->
+        <item>178</item> <!-- 2000-3500 -->
+        <item>220</item> <!-- 3500-5000 -->
+        <item>255</item> <!-- 5000-10000 -->
+        <item>255</item> <!-- 10000+ -->
     </integer-array>
 
     <!-- Array of output values for button backlight corresponding to the LUX values
@@ -222,6 +240,27 @@
         <item>0</item>
         <item>0</item>
         <item>0</item>
+        <item>0</item>
+        <item>0</item>
+        <item>0</item>
+        <item>0</item>
+    </integer-array>
+
+    <!-- Vibrator pattern for feedback about a long screen/key press -->
+    <integer-array name="config_longPressVibePattern">
+        <item>0</item>
+        <item>10</item>
+        <item>22</item>
+    </integer-array>
+
+    <!-- Vibrator pattern for feedback about touching a virtual key -->
+    <integer-array name="config_virtualKeyVibePattern">
+        <item>13</item>
+    </integer-array>
+
+    <!-- Vibrator pattern for a very short but reliable vibration for soft keyboard tap -->
+    <integer-array name="config_keyboardTapVibePattern">
+        <item>10</item>
     </integer-array>
 
     <!-- Hardware 'face' keys present on the device, stored as a bit field.
@@ -263,9 +302,6 @@
     <!-- If this is true, the screen will fade off. -->
     <bool name="config_animateScreenLights">false</bool>
 
-    <!-- Wether doze feature is enabled by default in settings. -->
-    <bool name="config_doze_enabled_by_default">false</bool>
-
     <!-- List of file paths for USB host busses to exclude from USB host support.
          For example, if the first USB bus on the device is used to communicate
          with the modem or some other restricted hardware, add "/dev/bus/usb/001/"
@@ -278,4 +314,21 @@
     <!-- Performance profiles -->
     <string name="config_perf_profile_prop">sys.perf.profile</string>
     <string name="config_perf_profile_default_entry">1</string>
+
+<!--TEST--> 
+    <!-- Ambient Display:Dream of notifications -->
+    <string name="config_dozeComponent">com.android.systemui/com.android.systemui.doze.DozeService</string>
+    <bool name="config_dozeAfterScreenOff">true</bool>
+<!--<bool name="config_powerDecoupleAutoSuspendModeFromDisplay">true</bool>-->
+    <bool name="config_powerDecoupleInteractiveModeFromDisplay">true</bool>
+
+     <!-- Screen brightness when dozing -->
+    <integer name="config_screenBrightnessDoze">6</integer>
+
+    <!-- Doze: force using accelerometer as pick up sensor -->
+    <bool name="config_dozeUseAccelerometer">true</bool>
+
+    <!-- Wether doze feature is enabled by default in settings. -->
+    <bool name="config_doze_enabled_by_default">false</bool>
+<!--TEST END--> 
 </resources>
