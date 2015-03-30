@@ -12,7 +12,7 @@ ro.telephony.ril_class=X3RIL
 #lge-ril.so
 #persist.radio.rr.enable=1
 #From stock prop:300000. Default RIL timeout=60000
-ro.ril.wake_lock_timeout=80000
+#ro.ril.wake_lock_timeout=80000
 #? ril.timeout.atcommand 0
 #? ril.timeout.javaril 0
 
@@ -49,3 +49,6 @@ persist.sys.usb.config=mtp,adb
 #debug.choreographer.vsync=true
 #debug.choreographer.frametime=true
 debug.choreographer.skipwarning=99
+
+# lollipop hwui, disable dirty regions invalidation
+debug.hwui.render_dirty_regions=false

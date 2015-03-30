@@ -10,12 +10,8 @@ PRODUCT_AAPT_PREF_CONFIG := xhdpi
 #Misc buid.prop tweaks
 PRODUCT_PROPERTY_OVERRIDES += \
     ro.ril.hsxpa=2 \
-    ro.ril.gprsclass=10
-
-# lollipop libhwui & stagefright flags
-PRODUCT_PROPERTY_OVERRIDES += \
-    debug.hwui.render_dirty_regions=false \
-    media.stagefright.use-awesome=true
+    ro.ril.gprsclass=10 \
+    ro.boot.selinux=permissive
 
 PRODUCT_BUILD_PROP_OVERRIDES += BUILD_UTC_DATE=0
 
