@@ -192,8 +192,8 @@ on boot
     write /sys/block/mmcblk0/queue/read_ahead_kb 2048
     write /sys/block/mmcblk1/queue/read_ahead_kb 2048
 
-    #LGE_CHANGE_S 20120720, hwansuk.kang@lge.com [data] Disable IPv6 for mobile network
-#    write /proc/sys/net/ipv6/conf/all/disable_ipv6 1
+    # Wifi: Disable the IPv6 of p2p0 interface
+    write /proc/sys/net/ipv6/conf/p2p0/disable_ipv6 1
 
     # didim
     chown system system /sys/class/graphics/fb0/device/smartdimmer/enable
