@@ -15,20 +15,31 @@
  */
 
 #define CAMERA_PARAMETERS_EXTRA_C \
+const char CameraParameters::KEY_ISO_MODE[] = "iso"; \
+const char CameraParameters::KEY_SUPPORTED_ISO_MODES[] = "iso-values"; \
 const char CameraParameters::KEY_CAPTURE_MODE[] = "capture-mode"; \
 const char CameraParameters::CAPTURE_MODE_NORMAL[] = "normal"; \
-const char CameraParameters::CAPTURE_MODE_STILL[] = "still"; \
-const char CameraParameters::CAPTURE_MODE_HDR[] = "hdr"; \
+const char CameraParameters::CAPTURE_MODE_SHOT2SHOT[] = "shot2shot"; \
 const char CameraParameters::KEY_SUPPORTED_CAPTURE_MODES[] = "capture-mode-values"; \
 const char CameraParameters::KEY_SATURATION[] = "saturation"; \
 const char CameraParameters::KEY_MINMAX_SATURATION[] = "saturation-minmax"; \
-
+const char CameraParameters::ISO_AUTO[] = "auto"; \
+const char CameraParameters::ISO_100[] = "ISO100"; \
+const char CameraParameters::ISO_200[] = "ISO200"; \
+const char CameraParameters::ISO_400[] = "ISO400"; \
+const char CameraParameters::ISO_800[] = "ISO800"; \
 
 #define CAMERA_PARAMETERS_EXTRA_H \
+    static const char KEY_ISO_MODE[]; \
+    static const char KEY_SUPPORTED_ISO_MODES[]; \
     static const char KEY_CAPTURE_MODE[]; \
     static const char CAPTURE_MODE_NORMAL[]; \
-    static const char CAPTURE_MODE_STILL[]; \
-    static const char CAPTURE_MODE_HDR[]; \
+    static const char CAPTURE_MODE_SHOT2SHOT[]; \
     static const char KEY_SUPPORTED_CAPTURE_MODES[]; \
     static const char KEY_SATURATION[]; \
     static const char KEY_MINMAX_SATURATION[]; \
+    static const char ISO_AUTO[]; \
+    static const char ISO_100[]; \
+    static const char ISO_200[] ; \
+    static const char ISO_400[]; \
+    static const char ISO_800[]; \
