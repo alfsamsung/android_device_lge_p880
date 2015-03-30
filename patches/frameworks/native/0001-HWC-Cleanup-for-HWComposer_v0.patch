@@ -1,18 +1,20 @@
-From 12b36498ac006068d5ee7ef048f5211adcb98d18 Mon Sep 17 00:00:00 2001
+From 6cbc27e2fdae7115625705d3080cb8633ba478fe Mon Sep 17 00:00:00 2001
 From: alfsamsung <alfsamsung@hotmail.com>
 Date: Wed, 25 Feb 2015 20:38:05 +0100
 Subject: [PATCH] HWC: Cleanup for HWComposer_v0
 
 Remove all ref to HWC_DEVICE_API_VERSION >= 1
+
+Update patch for 5.1
 ---
- .../surfaceflinger/DisplayHardware/HWComposer.h    |  5 ++-
- .../DisplayHardware/HWComposer_v0.cpp              | 52 ++++++----------------
+ .../surfaceflinger/DisplayHardware/HWComposer.h    |  5 +-
+ .../DisplayHardware/HWComposer_v0.cpp              | 70 +++++++---------------
  services/surfaceflinger/Layer.cpp                  |  2 +
  services/surfaceflinger/SurfaceFlinger.cpp         |  2 +
- 4 files changed, 21 insertions(+), 40 deletions(-)
+ 4 files changed, 28 insertions(+), 51 deletions(-)
 
 diff --git a/services/surfaceflinger/DisplayHardware/HWComposer.h b/services/surfaceflinger/DisplayHardware/HWComposer.h
-index 4e3d1d1..7e84966 100644
+index 095e722..af6ba66 100644
 --- a/services/surfaceflinger/DisplayHardware/HWComposer.h
 +++ b/services/surfaceflinger/DisplayHardware/HWComposer.h
 @@ -129,7 +129,6 @@ public:
@@ -43,10 +45,19 @@ index 4e3d1d1..7e84966 100644
          virtual void setDirtyRect(const Rect& dirtyRect) = 0;
  #endif
 diff --git a/services/surfaceflinger/DisplayHardware/HWComposer_v0.cpp b/services/surfaceflinger/DisplayHardware/HWComposer_v0.cpp
-index 39c369f..59b484e 100644
+index 39c369f..6781f0c 100644
 --- a/services/surfaceflinger/DisplayHardware/HWComposer_v0.cpp
 +++ b/services/surfaceflinger/DisplayHardware/HWComposer_v0.cpp
-@@ -179,8 +179,7 @@ HWComposer::HWComposer(
+@@ -51,8 +51,6 @@
+ 
+ namespace android {
+ 
+-#define MIN_HWC_HEADER_VERSION HWC_HEADER_VERSION
+-
+ static uint32_t hwcApiVersion(const hwc_composer_device_1_t* hwc) {
+     uint32_t hwcVersion = hwc->common.version;
+     return hwcVersion & HARDWARE_API_VERSION_2_MAJ_MIN_MASK;
+@@ -179,8 +177,7 @@ HWComposer::HWComposer(
      loadHwcModule();
  
      // If we have no HWC, or a pre-1.1 HWC, an FB dev is mandatory.
@@ -56,7 +67,7 @@ index 39c369f..59b484e 100644
          ALOGE("ERROR: failed to open framebuffer (%s), aborting",
                  strerror(-fberr));
          abort();
-@@ -219,8 +218,8 @@ HWComposer::HWComposer(
+@@ -219,8 +216,8 @@ HWComposer::HWComposer(
      }
  
      if (mFbDev) {
@@ -67,7 +78,28 @@ index 39c369f..59b484e 100644
  
          DisplayData& disp(mDisplayData[HWC_DISPLAY_PRIMARY]);
          disp.connected = true;
-@@ -436,6 +435,7 @@ status_t HWComposer::queryDisplayProperties(int disp) {
+@@ -296,14 +293,12 @@ void HWComposer::loadHwcModule()
+         return;
+     }
+ 
+-    if ((hwcHeaderVersion(mHwc) < MIN_HWC_HEADER_VERSION ||
+-            hwcHeaderVersion(mHwc) > HWC_HEADER_VERSION)) {
+-        ALOGE("%s device version %#x unsupported, will not be used",
+-              HWC_HARDWARE_COMPOSER, mHwc->common.version);
+-        hwc_close_1(mHwc);
+-        mHwc = NULL;
+-        return;
+-    }
++    //Not supported on HWC_HEADER_VERSION < 1
++    ALOGE("%s device version %#x unsupported, will not be used",
++          HWC_HARDWARE_COMPOSER, mHwc->common.version);
++    hwc_close_1(mHwc);
++    mHwc = NULL;
++    return;
+ }
+ 
+ // Load and prepare the FB HAL, which uses the gralloc module.  Sets mFbDev.
+@@ -436,6 +431,7 @@ status_t HWComposer::queryDisplayProperties(int disp) {
          ALOGE("%s: Invalid display config! %d", __FUNCTION__, currentConfig);
          currentConfig = 0;
      }
@@ -75,7 +107,16 @@ index 39c369f..59b484e 100644
      mDisplayData[disp].currentConfig = currentConfig;
      for (size_t c = 0; c < numConfigs; ++c) {
          err = mHwc->getDisplayAttributes(mHwc, disp, configs[c],
-@@ -814,12 +814,8 @@ status_t HWComposer::setPowerMode(int disp, int mode) {
+@@ -549,7 +545,7 @@ sp<Fence> HWComposer::getDisplayFence(int disp) const {
+ }
+ 
+ uint32_t HWComposer::getFormat(int disp) const {
+-    if (uint32_t(disp)>31 || !mAllocatedDisplayIDs.hasBit(disp)) {
++    if (uint32_t(disp)>= MAX_HWC_DISPLAYS || !mAllocatedDisplayIDs.hasBit(disp)) {
+         return HAL_PIXEL_FORMAT_RGBA_8888;
+     } else {
+         return mDisplayData[disp].format;
+@@ -814,12 +810,8 @@ status_t HWComposer::setPowerMode(int disp, int mode) {
                  eventControl(disp, HWC_EVENT_VSYNC, 0);
              }
          }
@@ -88,7 +129,7 @@ index 39c369f..59b484e 100644
      }
      return NO_ERROR;
  }
-@@ -827,29 +823,14 @@ status_t HWComposer::setPowerMode(int disp, int mode) {
+@@ -827,29 +819,14 @@ status_t HWComposer::setPowerMode(int disp, int mode) {
  status_t HWComposer::setActiveConfig(int disp, int mode) {
      LOG_FATAL_IF(disp >= VIRTUAL_DISPLAY_ID_BASE);
      DisplayData& dd(mDisplayData[disp]);
@@ -121,7 +162,7 @@ index 39c369f..59b484e 100644
  }
  
  void HWComposer::disconnectDisplay(int disp) {
-@@ -873,7 +854,7 @@ int HWComposer::getVisualID() const {
+@@ -873,7 +850,7 @@ int HWComposer::getVisualID() const {
  }
  
  bool HWComposer::supportsFramebufferTarget() const {
@@ -130,7 +171,7 @@ index 39c369f..59b484e 100644
  }
  
  int HWComposer::fbPost(int32_t id,
-@@ -968,10 +949,6 @@ public:
+@@ -968,10 +945,6 @@ public:
      virtual uint32_t getHints() const {
          return getLayer()->hints;
      }
@@ -141,7 +182,7 @@ index 39c369f..59b484e 100644
      virtual sp<Fence> getAndResetReleaseFence() {
          // not supported on VERSION_03
          return Fence::NO_FENCE;
-@@ -999,7 +976,6 @@ public:
+@@ -999,7 +972,6 @@ public:
          }
          return false;
      }
@@ -149,7 +190,7 @@ index 39c369f..59b484e 100644
      virtual void setPlaneAlpha(uint8_t alpha) {
          bool forceSkip = false;
          // PREMULT on the statusbar layer will artifact miserably on VERSION_03
-@@ -1034,11 +1010,12 @@ public:
+@@ -1034,11 +1006,12 @@ public:
              getLayer()->flags &= ~HWC_SKIP_LAYER;
          }
      }
@@ -166,7 +207,7 @@ index 39c369f..59b484e 100644
      }
      virtual void setBlending(uint32_t blending) {
          getLayer()->blending = blending;
-@@ -1071,9 +1048,6 @@ public:
+@@ -1071,9 +1044,6 @@ public:
          SharedBuffer const* sb = reg.getSharedBuffer(&visibleRegion.numRects);
          visibleRegion.rects = reinterpret_cast<hwc_rect_t const *>(sb->data());
      }
@@ -177,10 +218,10 @@ index 39c369f..59b484e 100644
      virtual void setDirtyRect(const Rect& dirtyRect) {
          // Unimplemented
 diff --git a/services/surfaceflinger/Layer.cpp b/services/surfaceflinger/Layer.cpp
-index 86c9dda..3d158e4 100755
+index 0d8b009..f1193fd 100755
 --- a/services/surfaceflinger/Layer.cpp
 +++ b/services/surfaceflinger/Layer.cpp
-@@ -557,7 +557,9 @@ void Layer::setPerFrameData(const sp<const DisplayDevice>& hw,
+@@ -609,7 +609,9 @@ void Layer::setPerFrameData(const sp<const DisplayDevice>& hw,
      layer.setVisibleRegionScreen(visible);
  
      if (mSidebandStream.get()) {
@@ -191,10 +232,10 @@ index 86c9dda..3d158e4 100755
          // NOTE: buffer can be NULL if the client never drew into this
          // layer yet, or if we ran out of memory
 diff --git a/services/surfaceflinger/SurfaceFlinger.cpp b/services/surfaceflinger/SurfaceFlinger.cpp
-index 48743af..10b37ca 100644
+index 47d91af..67563ea 100644
 --- a/services/surfaceflinger/SurfaceFlinger.cpp
 +++ b/services/surfaceflinger/SurfaceFlinger.cpp
-@@ -1257,7 +1257,9 @@ void SurfaceFlinger::setUpHWComposer() {
+@@ -1271,7 +1271,9 @@ void SurfaceFlinger::setUpHWComposer() {
                  for (size_t i=0 ; cur!=end && i<count ; ++i, ++cur) {
                      const sp<Layer>& layer(currentLayers[i]);
                      if (layer->isPotentialCursor()) {

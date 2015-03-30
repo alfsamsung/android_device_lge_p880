@@ -33,7 +33,7 @@ public class X3RIL extends RIL implements CommandsInterface {
         send(rrLSC);
         riljLog("X3RIL: LGE COMMAND " + (command) + " sendt");
     }
-    
+
     protected void
     setSpeechCodec(Object oldret) {
         if (oldret == null) {
@@ -76,7 +76,7 @@ public class X3RIL extends RIL implements CommandsInterface {
 
         send(rr);
     }
-    
+
     @Override
     public void
     setCallForward(int action, int cfReason, int serviceClass,
@@ -99,7 +99,7 @@ public class X3RIL extends RIL implements CommandsInterface {
 
         send(rr);
     }
-    
+
     @Override
     public void
     getIMEI(Message result) {
@@ -226,23 +226,7 @@ public class X3RIL extends RIL implements CommandsInterface {
         response.sendToTarget();
         response = null;
     }
-    
-    @Override
-    public void invokeOemRilRequestRaw(byte[] data, Message response) {
-        AsyncResult.forMessage(response).exception =
-            new CommandException(CommandException.Error.REQUEST_NOT_SUPPORTED);
-        response.sendToTarget();
-        response = null;
-    }
-   
-   @Override
-    public void setDataAllowed(boolean allowed, Message result) {
-        AsyncResult.forMessage(result).exception =
-            new CommandException(CommandException.Error.REQUEST_NOT_SUPPORTED);
-        result.sendToTarget();
-        result = null;
-    } 
-    
+
     @Override
     public void getImsRegistrationState(Message result) {
         AsyncResult.forMessage(result).exception =

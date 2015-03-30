@@ -4,8 +4,10 @@ LOCAL_PATH := device/lge/p880
 DEVICE_PACKAGE_OVERLAYS += device/lge/p880/overlay
 
 # This device is xhdpi
-PRODUCT_AAPT_CONFIG := normal hdpi xhdpi
+PRODUCT_AAPT_CONFIG := normal
 PRODUCT_AAPT_PREF_CONFIG := xhdpi
+# A list of dpis to select prebuilt apk, in precedence order.
+PRODUCT_AAPT_PREBUILT_DPI := hdpi
 
 #Misc buid.prop tweaks
 PRODUCT_PROPERTY_OVERRIDES += \
