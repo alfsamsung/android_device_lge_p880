@@ -61,7 +61,8 @@ PRODUCT_COPY_FILES += \
 ## ALSA Config
 PRODUCT_COPY_FILES += \
     $(LOCAL_PATH)/configs/audio_policy.conf:system/etc/audio_policy.conf \
-    $(LOCAL_PATH)/configs/nvaudio_conf.xml:system/etc/nvaudio_conf.xml 
+    $(LOCAL_PATH)/configs/nvaudio_conf.xml:system/etc/nvaudio_conf.xml \
+    $(LOCAL_PATH)/configs/asound.conf:system/etc/asound.conf
 
 # Permission files
 PRODUCT_COPY_FILES += \
