@@ -22,3 +22,7 @@ allow system_server nvhost_writable_device:dir rw_dir_perms;
 allow system_server nvhost_writable_device:file rw_file_perms;
 allow system_server nvhost_writable_device:chr_file { read write ioctl open };
 
+allow system_server sysfs_devices_tegradc:dir search;
+allow system_server sysfs_devices_tegradc:file { read write getattr open };
+allow system_server sysfs_devices_tegradc:lnk_file read;
+allow system_server sysfs_hardware:file rw_file_perms;
