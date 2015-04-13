@@ -74,6 +74,9 @@ on post-fs-data
     restorecon /sys/devices/tegradc.0/smartdimmer/aggressiveness
     restorecon /sys/devices/tegradc.0/smartdimmer/enable
 
+    # Set indication (checked by vold) that we have finished this action
+    setprop vold.post_fs_data_done 1
+
 on boot
     mkdir /data/misc/bluetooth 0770 bluetooth bluetooth
     # --- BRCM
