@@ -48,9 +48,9 @@
 /sys/devices/tegradc\.0(/.*)?                u:object_r:sysfs_devices_tegradc:s0
 /sys/devices/tegradc\.1(/.*)?                u:object_r:sysfs_devices_tegradc:s0
 /sys/devices/platform/tegra-i2c.1/i2c-1/1-0010/update_fw    --  u:object_r:sysfs_firmware_writable:s0
-/sys/class/rfkill/rfkill0/state          --  u:object_r:sysfs_bluetooth_writable:s0
-/sys/class/rfkill/rfkill0/type           --  u:object_r:sysfs_bluetooth_writable:s0
-/dev/rfkill                              --  u:object_r:sysfs_bluetooth_writable:s0
+/sys/class/rfkill/rfkill0/state           -- u:object_r:sysfs_bluetooth_writable:s0
+/sys/class/rfkill/rfkill0/type            -- u:object_r:sysfs_bluetooth_writable:s0
+/dev/rfkill                                  u:object_r:wpa_device:s0
 
 # Hardware tunables
 /sys/devices/platform/spi_tegra.4/spi4.2/gamma_tuning    u:object_r:sysfs_hardware:s0
@@ -60,3 +60,6 @@
 /sys/devices/system/cpu/cpu0/cpufreq/scaling_min_freq    u:object_r:sysfs_devices_system_cpu:s0
 /sys/devices/system/cpu/cpu0/cpufreq/scaling_max_freq    u:object_r:sysfs_devices_system_cpu:s0
 /sys/module/cpu_tegra/parameters/cpu_user_cap            u:object_r:sysfs_devices_system_cpu:s0
+
+# Reboot to Recovery
+/dev/block/mmcblk0p5                                     u:object_r:misc_block_device:s0

@@ -5,3 +5,4 @@ allow sysinit property_socket:sock_file write;
 allow sysinit sysfs:file write;
 allow sysinit sysfs_devices_system_cpu:file write;
 allow sysinit system_data_file:file open; 
+allow sysinit default_prop:property_service set;

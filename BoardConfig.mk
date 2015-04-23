@@ -51,7 +51,7 @@ BOARD_HAS_LARGE_FILESYSTEM := true
 TARGET_USERIMAGES_USE_EXT4 := true
 
 # Build the kernel
-BOARD_KERNEL_CMDLINE := androidboot.selinux=permissive
+#BOARD_KERNEL_CMDLINE := androidboot.selinux=permissive
 BOARD_KERNEL_BASE := 0x10000000
 BOARD_KERNEL_PAGESIZE := 2048
 
@@ -101,8 +101,10 @@ COMMON_GLOBAL_CFLAGS += -DMR0_AUDIO_BLOB -DMR0_CAMERA_BLOB -DNEEDS_VECTORIMPL_SY
 
 # Enable various build optimizations
 COMMON_GLOBAL_CFLAGS += -D__ARM_USE_PLD -D__ARM_CACHE_LINE_SIZE=32
-TARGET_GLOBAL_CFLAGS += -mtune=cortex-a9 -mfpu=neon -mfloat-abi=softfp
-TARGET_GLOBAL_CPPFLAGS += -mtune=cortex-a9 -mfpu=neon -mfloat-abi=softfp
+TARGET_GLOBAL_CFLAGS += -mtune=cortex-a9 -mfpu=neon -mfloat-abi=softfp \
+        -mvectorize-with-neon-quad
+TARGET_GLOBAL_CPPFLAGS += -mtune=cortex-a9 -mfpu=neon -mfloat-abi=softfp \
+        -mvectorize-with-neon-quad
 
 # Kitkat
 BOARD_HAVE_PRE_KITKAT_AUDIO_BLOB := true
@@ -129,8 +131,12 @@ BOARD_RIL_CLASS := ../../../device/lge/p880/ril/
 # Override healthd HAL
 BOARD_HAL_STATIC_LIBRARIES := libhealthd.x3
 
+# Fonts
+EXTENDED_FONT_FOOTPRINT := true
+
 # Misc
 BOARD_CHARGER_ENABLE_SUSPEND := true
+BOARD_CHARGER_SHOW_PERCENTAGE := true
 BOARD_BATTERY_DEVICE_NAME := battery
 
 TARGET_BOOTANIMATION_PRELOAD := true
@@ -152,6 +158,7 @@ BOARD_SEPOLICY_UNION += \
         init_shell.te \
         file.te \
         gpsd.te \
+        hostapd.te \
         keystore.te \
         lge_service.te \
         lmkd.te \
@@ -165,6 +172,7 @@ BOARD_SEPOLICY_UNION += \
         sysinit.te \
         system_server.te \
         ueventd.te \
-        vold.te
+        vold.te \
+        wpa.te
 
 BOARD_HARDWARE_CLASS := device/lge/p880/cmhw/

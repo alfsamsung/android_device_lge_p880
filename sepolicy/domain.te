@@ -15,8 +15,11 @@ allow kernel fuse:dir search;
 allow netd kernel:system module_request;
 allow sysinit calibration_data_file:dir getattr;
 
-# Allow wpa on rfkill
-allow wpa sysfs_bluetooth_writable:file rw_file_perms;
+# Netd
+allow netd self:capability fsetid;
+
+# Fm radio
+allow platform_app video_device:chr_file rw_file_perms;
 
 # bootanim
 allow bootanim nvhost_writable_device:chr_file { read write ioctl open };

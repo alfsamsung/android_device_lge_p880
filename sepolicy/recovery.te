@@ -7,5 +7,6 @@ recovery_only(`
   allow recovery self:capability mknod;
   allow recovery usbfs:dir rw_dir_perms;
   allow recovery device:chr_file create_file_perms;
+  allow recovery recovery_cache_file:file { read getattr open };
+  allow recovery recovery_cache_file:dir { read getattr open };
 ')
-

@@ -4,9 +4,9 @@ type lgsecclk_exec, exec_type, file_type;
 init_daemon_domain(lgsecclk)
 allow lgsecclk system_server_service:service_manager add;
 allow lgsecclk self:process execmem;
-allow lgsecclk calibration_data_file:dir read;
+allow lgsecclk calibration_data_file:dir { read search open };
 allow lgsecclk unlabeled:file { read write getattr open };
-allow servicemanager lgsecclk:dir search;
+allow servicemanager lgsecclk:dir { read search open };
 allow servicemanager lgsecclk:file { read write open };
 allow servicemanager lgsecclk:process getattr; 
 

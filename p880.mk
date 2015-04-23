@@ -12,8 +12,8 @@ PRODUCT_AAPT_PREBUILT_DPI := hdpi
 #Misc buid.prop tweaks
 PRODUCT_PROPERTY_OVERRIDES += \
     ro.ril.hsxpa=2 \
-    ro.ril.gprsclass=10 \
-    ro.boot.selinux=permissive
+    ro.ril.gprsclass=10
+#    ro.boot.selinux=permissive
 
 PRODUCT_BUILD_PROP_OVERRIDES += BUILD_UTC_DATE=0
 
