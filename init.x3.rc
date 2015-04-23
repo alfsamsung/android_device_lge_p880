@@ -263,12 +263,6 @@ service nvcpud /system/bin/nvcpud
     user root
     group root
 
-service charger /charger
-    class charger
-    user root
-    group root
-    oneshot
-
 service lgsecclk /system/bin/lgsecclkserver
     class main
     user system
@@ -341,6 +335,15 @@ service wpa_supplicant /system/bin/wpa_supplicant \
     socket wpa_wlan0 dgram 660 wifi wifi
     disabled
     oneshot
+
+on charger
+    mount ext4 /dev/block/platform/sdhci-tegra.3/by-name/APP /system wait ro
+    class_start charger
+
+service charger /sbin/healthd -c
+    class charger
+    critical
+    seclabel u:r:healthd:s0 
 
 # restart when servicemanager is restarted
 on property:init.svc.servicemanager=restarting
