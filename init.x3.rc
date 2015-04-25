@@ -385,28 +385,34 @@ on property:dev.bootcomplete=1
     # Powersave
 on property:sys.perf.profile=0
     write /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor interactive
+    write /sys/devices/system/cpu/cpufreq/interactive/go_maxspeed_load 98
     ## Cpu multicore power saving. 0-2, 0=default and no saving
     write /sys/devices/system/cpu/sched_mc_power_savings 2
     ## 0-2, 0=default and lowest threads
     write /sys/devices/system/cpu/cpuquiet/balanced/core_bias 2
     ## 75=default. Cpu usage in %
     write /sys/devices/system/cpu/cpuquiet/balanced/balance_level 85
+    ## 900=default Time delay before turning off cpu. Value in msec 
+    write /sys/devices/system/cpu/cpuquiet/balanced/down_delay 400
     ## Backlight hvled 0=maks
     write /sys/devices/platform/tegra-i2c.1/i2c-1/1-0036/lm3533_bl_hvled 1
 
     # Balanced
 on property:sys.perf.profile=1
     write /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor interactive
+    write /sys/devices/system/cpu/cpufreq/interactive/go_maxspeed_load 95
     write /sys/devices/system/cpu/sched_mc_power_savings 1
     write /sys/devices/system/cpu/cpuquiet/balanced/core_bias 1
     write /sys/devices/system/cpu/cpuquiet/balanced/balance_level 80
+    write /sys/devices/system/cpu/cpuquiet/balanced/down_delay 1000
     write /sys/devices/platform/tegra-i2c.1/i2c-1/1-0036/lm3533_bl_hvled 0
 
     # Performance
 on property:sys.perf.profile=2
-    write /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor ondemand
-    write /sys/devices/system/cpu/cpufreq/ondemand/up_thershold 85
+    write /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor interactive
+    write /sys/devices/system/cpu/cpufreq/interactive/go_maxspeed_load 75
     write /sys/devices/system/cpu/sched_mc_power_savings 0
     write /sys/devices/system/cpu/cpuquiet/balanced/core_bias 0
     write /sys/devices/system/cpu/cpuquiet/balanced/balance_level 75
+    write /sys/devices/system/cpu/cpuquiet/balanced/down_delay 4000
     write /sys/devices/platform/tegra-i2c.1/i2c-1/1-0036/lm3533_bl_hvled 0
