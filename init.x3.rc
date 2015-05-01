@@ -9,6 +9,14 @@ on early-init
     mkdir /mpt 0775 system system
 
 on init
+    # Put all cpu cores online
+    chmod 0664 /sys/kernel/debug/tegra_hotplug/min_cpus
+    chmod 0664 /sys/kernel/debug/tegra_hotplug/max_cpus
+    chown system system /sys/kernel/debug/tegra_hotplug/min_cpus
+    chown system system /sys/kernel/debug/tegra_hotplug/max_cpus
+    write /sys/kernel/debug/tegra_hotplug/min_cpus 4
+
+    # Storage
     mkdir /mnt/media_rw/sdcard1 0700 media_rw media_rw
     mkdir /storage/sdcard1 0700 root root
 
@@ -21,7 +29,6 @@ on init
     export EMULATED_STORAGE_SOURCE /mnt/shell/emulated
     export EMULATED_STORAGE_TARGET /storage/emulated
     export SECONDARY_STORAGE /storage/sdcard1
-
 
     # Support legacy paths
     symlink /storage/emulated/legacy /sdcard
@@ -62,17 +69,12 @@ on post-fs-data
     setprop vold.post_fs_data_done 1
     
     # Hardware tunable perms
-    chown root system /sys/devices/platform/spi_tegra.4/spi4.2/gamma_tuning
-    chown root system /sys/devices/platform/tspdrv/nforce_timed
-    chown root system /sys/devices/virtual/input/lge_touch/keypad_enable
+    chown system system /sys/devices/platform/spi_tegra.4/spi4.2/gamma_tuning
+    chown system system /sys/devices/platform/tspdrv/nforce_timed
+    chown system system /sys/devices/virtual/input/lge_touch/keypad_enable
     chmod 0664 /sys/devices/platform/spi_tegra.4/spi4.2/gamma_tuning
     chmod 0664 /sys/devices/platform/tspdrv/nforce_timed
     chmod 0664 /sys/devices/virtual/input/lge_touch/keypad_enable
-    restorecon /sys/devices/platform/spi_tegra.4/spi4.2/gamma_tuning
-    restorecon /sys/devices/platform/tspdrv/nforce_timed
-    restorecon /sys/devices/virtual/input/lge_touch/keypad_enable
-    restorecon /sys/devices/tegradc.0/smartdimmer/aggressiveness
-    restorecon /sys/devices/tegradc.0/smartdimmer/enable
 
     # Set indication (checked by vold) that we have finished this action
     setprop vold.post_fs_data_done 1
@@ -362,6 +364,9 @@ on property:init.svc.bootanim=stopped
     # Power management settings (Kernel uses performance governor at boot, so add this late)
     write /sys/module/cpu_tegra3/parameters/no_lp 0
     write /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor interactive
+    write /sys/devices/system/cpu/cpu1/cpufreq/scaling_governor interactive
+    write /sys/devices/system/cpu/cpu2/cpufreq/scaling_governor interactive
+    write /sys/devices/system/cpu/cpu3/cpufreq/scaling_governor interactive
     chown system system /sys/devices/system/cpu/cpufreq/interactive/cores_states
     chmod 0644 /sys/devices/system/cpu/cpufreq/interactive/cores_states
     chown system system /sys/devices/system/cpu/cpu0/cpufreq/scaling_max_freq
@@ -380,6 +385,9 @@ on property:init.svc.bootanim=stopped
 on property:dev.bootcomplete=1
     write /sys/devices/platform/tegra-i2c.0/i2c-0/0-0039/run_calibration 1
     write /sys/block/mmcblk0/queue/scheduler row
+
+    # Start cpuquiet
+    write /sys/kernel/debug/tegra_hotplug/min_cpus 0
 
 # Performance Profiles
     # Powersave

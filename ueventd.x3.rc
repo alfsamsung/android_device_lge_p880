@@ -7,16 +7,11 @@
 /dev/tegra_audio_avpchannel	0660	media	media
 /dev/tegra_sema	0660	media	media
 /dev/tegra_mediaserver	0660 	media 	media
-#/dev/ar0832	0660	media	camera
 /dev/imx111 0660	media	camera
 /dev/imx119 0660	media	camera
 /dev/dw9714	0660	media	camera
 /dev/lm3559	0660	media	camera
 /dev/imx119     0660    media   camera
-#/dev/imx073	0660	media	camera
-#/dev/ov2710	0660	media	camera
-#/dev/sh532u	0660	media	camera
-#/dev/mt9m114	0660	media	camera
 /dev/tegra_camera	0660	media	camera
 /dev/camera*	0660	media	camera
 /dev/focuser*	0660	media	camera
@@ -59,6 +54,9 @@
 /dev/pts29	0660	media	media
 /sys/devices/system/cpu/cpufreq/gov_interactive* ../interactive/max_boost 0644 system system
 /sys/devices/system/cpu/cpufreq/gov_interactive* ../interactive/go_maxspeed_load 0644 system system
+/sys/devices/system/cpu/cpu*   cpufreq/scaling_max_freq   0664  system system
+/sys/devices/system/cpu/cpu*   cpufreq/scaling_min_freq   0664  system system
+/sys/devices/system/cpu/cpu*   cpufreq/scaling_governor   0664  system system
 
 /dev/rfkill               0660   wifi       wifi
 # GPS
