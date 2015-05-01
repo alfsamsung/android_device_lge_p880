@@ -132,6 +132,9 @@ BOARD_RIL_CLASS := ../../../device/lge/p880/ril/
 # Override healthd HAL
 BOARD_HAL_STATIC_LIBRARIES := libhealthd.x3
 
+# Enable Minikin text layout engine (will be the default soon)
+USE_MINIKIN := true
+
 # Fonts
 EXTENDED_FONT_FOOTPRINT := true
 
