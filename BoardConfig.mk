@@ -9,9 +9,9 @@ TARGET_GCC_VERSION_EXP := 4.8-sm
 # This is needed for GCC 4.9
 #COMMON_GLOBAL_CFLAGS += -Wno-maybe-uninitialized
 KERNEL_TOOLCHAIN_PREFIX := arm-eabi-
-KERNEL_TOOLCHAIN := $(ANDROID_BUILD_TOP)/prebuilts/gcc/$(HOST_OS)-x86/arm/arm-eabi-4.9-lin/bin/
+KERNEL_TOOLCHAIN := $(ANDROID_BUILD_TOP)/prebuilts/gcc/$(HOST_OS)-x86/arm/arm-eabi-5.1-ub/bin/
 # A few kernel gcc config options 
-#export CONFIG_GRAPHITE_FLAGS := true
+export CONFIG_GRAPHITE_FLAGS := true
 #export CONFIG_CC_OPTIMIZE_MORE := true
 
 # Skip droiddoc build to save build time
