@@ -13,7 +13,6 @@ PRODUCT_AAPT_PREBUILT_DPI := hdpi
 PRODUCT_PROPERTY_OVERRIDES += \
     ro.ril.hsxpa=2 \
     ro.ril.gprsclass=10
-#    ro.boot.selinux=permissive
 
 PRODUCT_BUILD_PROP_OVERRIDES += BUILD_UTC_DATE=0
 
@@ -56,7 +55,6 @@ PRODUCT_COPY_FILES += \
     $(LOCAL_PATH)/configs/tegra-snd-max98088.kl:system/usr/keylayout/tegra-snd-max98088.kl \
     $(LOCAL_PATH)/configs/touch_dev.kl:system/usr/keylayout/touch_dev.kl \
     $(LOCAL_PATH)/configs/touch_dev.idc:system/usr/idc/touch_dev.idc
-#   $(LOCAL_PATH)/configs/MHLRCP.kl:system/usr/keylayout/MHLRCP.kl \
 
 ## ALSA Config
 PRODUCT_COPY_FILES += \
@@ -121,10 +119,6 @@ PRODUCT_PACKAGES += \
 # Charger mode
 PRODUCT_PACKAGES += \
     charger_res_images
-
-# For SELinux
-PRODUCT_COPY_FILES += \
-    $(LOCAL_PATH)/prebuilt/51selinux:system/etc/init.d/51selinux
 
 # Inherit full_base,wifi firmware and vendor blobs.
 $(call inherit-product, $(SRC_TARGET_DIR)/product/full_base_telephony.mk)
