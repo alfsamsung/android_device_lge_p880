@@ -4,8 +4,9 @@ manfid=0x2d0
 vendid=0x14e4
 devid=0x4360
 boardtype=0x0532
-boardrev=0x20
-boardflags=0x10080201
+boardrev=0x40
+#boardflags: has ext 5GHz lna, use a SP3T sw share with BT, 2.4GHz iLNA and iPA
+boardflags=0x10081201
 
 nocrc=1
 xtalfreq=37400
@@ -14,6 +15,7 @@ boardnum=22
 macaddr=00:90:4c:c5:12:38
 ag0=252
 ag1=252
+# aa2g=1 means by default only one antenna, MAIN RF.
 aa2g=1
 aa5g=1
 ccode=XY
@@ -24,8 +26,9 @@ btc_params80=0
 btc_params6=10
 btc_params8=10000
 
-#sd_gpout=0
+sd_gpout=0
 #sd_oobonly=1
+# 4330 OOB parameter: High level trigger
 muxenab=0x10
 
 # 2G PA param_B42R 110927
@@ -80,6 +83,7 @@ mcs5ghpo1=0x6666
 cckPwrOffset=4
 cckdigfilttype=22
 ofdmdigfilttype=2
+# support A band ext PA
 extpagain5g=2
 #wl0id=0x431b
 
@@ -95,7 +99,7 @@ bphyscale=17
 txgaintbl5g=1
 txiqlopapu5g=1
 txiqlopag5g=0x10
-iqlocalidx5g=24
+iqlocalidx5g=32
 
 # 5GHz Noise CAL parameter
 noise_cal_po_5g=5
@@ -115,9 +119,15 @@ tssitime=1
 #fc+1.7GHz Spur Elimination
 loidacmode5g=1
 
+# 2.4G ACR performance
+rxgaintbl100=1
+
 # 5GHz Starting Tx Gain Index
 initxidx5g=96
 
+# 2G Murata FEM
+#swctrlmap_2g=0x04040404, 0x0a0a0202, 0x0c0c0404, 0x010a02, 0x1ff
 swctrlmap_2g=0x84048404, 0x82028202, 0x84048404, 0x010202, 0x1ff
-swctrlmap_5g=0xC040C040, 0xB030A020, 0xA020C040, 0x010A02, 0x2F8
+# 5G Murata MDFE2PFA-023
+swctrlmap_5g=0x90909090, 0x60602020, 0x50502020, 0x010a02, 0x2f8
 
