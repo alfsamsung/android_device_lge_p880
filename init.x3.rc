@@ -200,6 +200,10 @@ on boot
     # Wifi: Disable the IPv6 of p2p0 interface
     write /proc/sys/net/ipv6/conf/p2p0/disable_ipv6 1
 
+    # ipconfig for wifi
+    touch /data/misc/wifi/ipconfig.txt
+    chmod 0777 /data/misc/wifi/ipconfig.txt
+
     # didim
     chown system system /sys/class/graphics/fb0/device/smartdimmer/enable
     chown system system /sys/class/graphics/fb0/device/smartdimmer/aggressiveness
@@ -362,7 +366,6 @@ on property:init.svc.bootanim=stopped
     write /sys/kernel/mm/ksm/run 0
     
     # Power management settings (Kernel uses performance governor at boot, so add this late)
-    write /sys/module/cpu_tegra3/parameters/no_lp 0
     write /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor interactive
     write /sys/devices/system/cpu/cpu1/cpufreq/scaling_governor interactive
     write /sys/devices/system/cpu/cpu2/cpufreq/scaling_governor interactive
@@ -372,15 +375,16 @@ on property:init.svc.bootanim=stopped
     chown system system /sys/devices/system/cpu/cpu0/cpufreq/scaling_max_freq
     chmod 0644 /sys/devices/system/cpu/cpu0/cpufreq/scaling_max_freq
     write /sys/module/cpu_tegra/parameters/force_policy_max Y
-    write /sys/devices/system/cpu/cpufreq/interactive/boost_factor 2
-    write /sys/devices/system/cpu/cpufreq/interactive/sustain_load 80
-    write /sys/module/cpu_tegra3/parameters/auto_hotplug 1
     write /sys/module/cpuidle/parameters/lp2_in_idle 1
 
     # Interactive dynamic frequecy mode settings
+    write /sys/devices/system/cpu/cpufreq/interactive/io_is_busy 1
+    write /sys/devices/system/cpu/cpufreq/interactive/boost_factor 2
+    write /sys/devices/system/cpu/cpufreq/interactive/sustain_load 80
     write /sys/devices/system/cpu/cpufreq/interactive/go_maxspeed_load 95
     write /sys/devices/system/cpu/cpufreq/interactive/dynamic_freq_mode 1
-    write /sys/devices/system/cpu/cpufreq/interactive/min_sample_time 20000
+    write /sys/devices/system/cpu/cpufreq/interactive/min_sample_time 90000
+    write /sys/devices/system/cpu/cpufreq/interactive/timer_rate 30000
 
 on property:dev.bootcomplete=1
     write /sys/devices/platform/tegra-i2c.0/i2c-0/0-0039/run_calibration 1
@@ -396,11 +400,11 @@ on property:sys.perf.profile=0
     write /sys/devices/system/cpu/cpufreq/interactive/go_maxspeed_load 98
     ## Cpu multicore power saving. 0-2, 0=default and no saving
     write /sys/devices/system/cpu/sched_mc_power_savings 2
-    ## 0-2, 0=default and lowest threads
+    ## 0-3, 0=default and lowest threads, 3=running threads disabled.
     write /sys/devices/system/cpu/cpuquiet/balanced/core_bias 2
     ## 75=default. Cpu usage in %
     write /sys/devices/system/cpu/cpuquiet/balanced/balance_level 85
-    ## 900=default Time delay before turning off cpu. Value in msec 
+    ## 1000=default Time delay before turning off cpu. Value in msec 
     write /sys/devices/system/cpu/cpuquiet/balanced/down_delay 400
     ## Backlight hvled 0=maks
     write /sys/devices/platform/tegra-i2c.1/i2c-1/1-0036/lm3533_bl_hvled 1
@@ -420,7 +424,7 @@ on property:sys.perf.profile=2
     write /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor interactive
     write /sys/devices/system/cpu/cpufreq/interactive/go_maxspeed_load 75
     write /sys/devices/system/cpu/sched_mc_power_savings 0
-    write /sys/devices/system/cpu/cpuquiet/balanced/core_bias 0
+    write /sys/devices/system/cpu/cpuquiet/balanced/core_bias 3
     write /sys/devices/system/cpu/cpuquiet/balanced/balance_level 75
-    write /sys/devices/system/cpu/cpuquiet/balanced/down_delay 4000
+    write /sys/devices/system/cpu/cpuquiet/balanced/down_delay 3000
     write /sys/devices/platform/tegra-i2c.1/i2c-1/1-0036/lm3533_bl_hvled 0
