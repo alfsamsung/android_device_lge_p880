@@ -16,6 +16,8 @@
 /dev/pts17                        u:object_r:gps_device:s0
 /dev/pts20                        u:object_r:radio_device:s0
 /dev/pts29                        u:object_r:radio_device:s0
+# New alarm device
+/dev/rtc0                         u:object_r:alarm_device:s0
 
 # camera
 /dev/lm3559                      u:object_r:camera_device:s0
