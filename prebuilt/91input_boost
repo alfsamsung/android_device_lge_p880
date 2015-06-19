@@ -1,0 +1,12 @@
+#!/system/bin/sh
+
+## Set this to 0 to disable input cpu boost
+ENABLE=1
+
+if [ $ENABLE = 1 ]; then
+    if [ -e /sys/module/input_cfboost/parameters/boost_freq ]; then 
+        echo 760000 > /sys/module/input_cfboost/parameters/boost_freq
+        echo 500 > /sys/module/input_cfboost/parameters/boost_time
+        #echo 2 > /sys/module/input_cfboost/parameters/boost_cpus
+    fi
+fi

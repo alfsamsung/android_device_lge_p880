@@ -16,6 +16,10 @@ PRODUCT_PROPERTY_OVERRIDES += \
 
 PRODUCT_BUILD_PROP_OVERRIDES += BUILD_UTC_DATE=0
 
+## Input-boost
+PRODUCT_COPY_FILES += \
+    $(LOCAL_PATH)/prebuilt/91input_boost:system/etc/init.d/91input_boost
+
 ## Recovery
 PRODUCT_COPY_FILES += \
     $(LOCAL_PATH)/prebuilt/postrecoveryboot.sh:recovery/root/sbin/postrecoveryboot.sh \
