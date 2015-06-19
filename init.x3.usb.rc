@@ -50,16 +50,15 @@ on property:sys.usb.config=mass_storage,adb
     setprop sys.usb.state ${sys.usb.config}
 
 on charger
+    stop adb
     write /sys/class/android_usb/android0/enable 0
     write /sys/class/android_usb/android0/idVendor 1004
     write /sys/class/android_usb/android0/idProduct 61FC
     write /sys/class/android_usb/android0/bDeviceClass 239
     write /sys/class/android_usb/android0/bDeviceSubClass 2
     write /sys/class/android_usb/android0/bDeviceProtocol 1
-    write /sys/class/android_usb/android0/functions acm,serial,cdrom_storage,mass_storage,adb
+    write /sys/class/android_usb/android0/functions charging
     write /sys/class/android_usb/android0/enable 1
-    start adbd
-    start port-bridge
     setprop sys.usb.state ${sys.usb.config}
 
 on property:sys.usb.config=rndis

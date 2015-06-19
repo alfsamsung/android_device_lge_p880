@@ -218,7 +218,6 @@ on boot
 
     #Misc tweaks
     write /proc/sys/vm/highmem_is_dirtyable 1
-    write /proc/sys/vm/min_free_kbytes 8192
 
     # KSM
     chown root system /sys/kernel/mm/ksm/run
@@ -344,6 +343,7 @@ service wpa_supplicant /system/bin/wpa_supplicant \
 
 on charger
     mount ext4 /dev/block/platform/sdhci-tegra.3/by-name/APP /system wait ro
+    write /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor conservative
     class_start charger
 
 service charger /sbin/healthd -c
@@ -355,6 +355,9 @@ service charger /sbin/healthd -c
 on property:init.svc.servicemanager=restarting
     restart lgdrm
     restart lgsecclk
+
+on property:init.svc.wpa_supplicant=stopped
+    stop dhcpcd
 
 on property:init.svc.bootanim=stopped
     # Assign TCP buffer thresholds to be ceiling value of technology maximums
@@ -380,10 +383,10 @@ on property:init.svc.bootanim=stopped
     # Interactive dynamic frequecy mode settings
     write /sys/devices/system/cpu/cpufreq/interactive/io_is_busy 1
     write /sys/devices/system/cpu/cpufreq/interactive/boost_factor 2
-    write /sys/devices/system/cpu/cpufreq/interactive/sustain_load 80
-    write /sys/devices/system/cpu/cpufreq/interactive/go_maxspeed_load 95
+    write /sys/devices/system/cpu/cpufreq/interactive/sustain_load 85
+    write /sys/devices/system/cpu/cpufreq/interactive/go_maxspeed_load 97
     write /sys/devices/system/cpu/cpufreq/interactive/dynamic_freq_mode 1
-    write /sys/devices/system/cpu/cpufreq/interactive/min_sample_time 90000
+    write /sys/devices/system/cpu/cpufreq/interactive/min_sample_time 50000
     write /sys/devices/system/cpu/cpufreq/interactive/timer_rate 30000
 
 on property:dev.bootcomplete=1
@@ -396,8 +399,6 @@ on property:dev.bootcomplete=1
 # Performance Profiles
     # Powersave
 on property:sys.perf.profile=0
-    write /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor interactive
-    write /sys/devices/system/cpu/cpufreq/interactive/go_maxspeed_load 98
     ## Cpu multicore power saving. 0-2, 0=default and no saving
     write /sys/devices/system/cpu/sched_mc_power_savings 2
     ## 0-3, 0=default and lowest threads, 3=running threads disabled.
@@ -407,12 +408,10 @@ on property:sys.perf.profile=0
     ## 1000=default Time delay before turning off cpu. Value in msec 
     write /sys/devices/system/cpu/cpuquiet/balanced/down_delay 400
     ## Backlight hvled 0=maks
-    write /sys/devices/platform/tegra-i2c.1/i2c-1/1-0036/lm3533_bl_hvled 1
+    write /sys/devices/platform/tegra-i2c.1/i2c-1/1-0036/lm3533_bl_hvled 2
 
     # Balanced
 on property:sys.perf.profile=1
-    write /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor interactive
-    write /sys/devices/system/cpu/cpufreq/interactive/go_maxspeed_load 95
     write /sys/devices/system/cpu/sched_mc_power_savings 1
     write /sys/devices/system/cpu/cpuquiet/balanced/core_bias 1
     write /sys/devices/system/cpu/cpuquiet/balanced/balance_level 80
@@ -421,10 +420,8 @@ on property:sys.perf.profile=1
 
     # Performance
 on property:sys.perf.profile=2
-    write /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor interactive
-    write /sys/devices/system/cpu/cpufreq/interactive/go_maxspeed_load 75
     write /sys/devices/system/cpu/sched_mc_power_savings 0
     write /sys/devices/system/cpu/cpuquiet/balanced/core_bias 3
     write /sys/devices/system/cpu/cpuquiet/balanced/balance_level 75
-    write /sys/devices/system/cpu/cpuquiet/balanced/down_delay 3000
+    write /sys/devices/system/cpu/cpuquiet/balanced/down_delay 2000
     write /sys/devices/platform/tegra-i2c.1/i2c-1/1-0036/lm3533_bl_hvled 0

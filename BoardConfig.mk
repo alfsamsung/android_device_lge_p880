@@ -6,7 +6,7 @@ TARGET_BUILD_VARIANT := userdebug
 
 #GCC
 TARGET_GCC_VERSION_EXP := 4.8-sm
-# This is needed for GCC 4.9
+# This is needed for GCC 4.9-sm
 #COMMON_GLOBAL_CFLAGS += -Wno-maybe-uninitialized
 KERNEL_TOOLCHAIN_PREFIX := arm-eabi-
 KERNEL_TOOLCHAIN := $(ANDROID_BUILD_TOP)/prebuilts/gcc/$(HOST_OS)-x86/arm/arm-eabi-5.1-ar/bin/
@@ -56,11 +56,11 @@ BOARD_KERNEL_BASE := 0x10000000
 BOARD_KERNEL_PAGESIZE := 2048
 
 ifeq ($(TARGET_BUILD_VARIANT),user)
-BOARD_KERNEL_CMDLINE := androidboot.selinux=disabled
 TARGET_KERNEL_CONFIG := cyanogenmod_x3-light_defconfig
 COMMON_GLOBAL_CFLAGS += -DALLOW_LOCAL_PROP_OVERRIDE=1 -DALLOW_DISABLE_SELINUX=1 -DALLOW_ADBD_ROOT=1
 WITH_DEXPREOPT := true
 DONT_DEXPREOPT_PREBUILTS := true
+WITH_DEXPREOPT_COMP := true
 else
 TARGET_KERNEL_CONFIG := cyanogenmod_x3_defconfig
 endif
@@ -137,6 +137,9 @@ USE_MINIKIN := true
 
 # Fonts
 EXTENDED_FONT_FOOTPRINT := true
+
+# Use prebuilt Chromium. Saves some build time.
+USE_PREBUILT_CHROMIUM := 1
 
 # Misc
 BOARD_CHARGER_ENABLE_SUSPEND := true
