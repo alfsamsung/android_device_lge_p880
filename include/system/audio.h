@@ -65,13 +65,13 @@ typedef enum {
                                         */
     AUDIO_STREAM_DTMF             = 8,
     AUDIO_STREAM_TTS              = 9,  /* Transmitted Through Speaker.
-                                          * Plays over speaker only, silent on other devices.
-                                          */
+                                         * Plays over speaker only, silent on other devices.
+                                         */
     AUDIO_STREAM_ACCESSIBILITY    = 10, /* For accessibility talk back prompts */
     AUDIO_STREAM_REROUTING        = 11, /* For dynamic policy output mixes */
     AUDIO_STREAM_PATCH            = 12, /* For internal audio flinger tracks. Fixed volume */
     AUDIO_STREAM_PUBLIC_CNT       = AUDIO_STREAM_TTS + 1,
-#ifdef QCOM_HARDWARE
+#if defined(QCOM_HARDWARE) && !defined(QCOM_DIRECTTRACK)
     AUDIO_STREAM_INCALL_MUSIC     = 13,
     AUDIO_STREAM_CNT              = AUDIO_STREAM_INCALL_MUSIC + 1,
 #else
@@ -661,23 +661,32 @@ enum {
     AUDIO_DEVICE_OUT_BLUETOOTH_A2DP_HEADPHONES = 0x100,
     AUDIO_DEVICE_OUT_BLUETOOTH_A2DP_SPEAKER    = 0x200,
     AUDIO_DEVICE_OUT_AUX_DIGITAL               = 0x400,
-    AUDIO_DEVICE_OUT_HDMI                      = AUDIO_DEVICE_NONE,
-    AUDIO_DEVICE_OUT_ANLG_DOCK_HEADSET         = AUDIO_DEVICE_NONE,
-    AUDIO_DEVICE_OUT_DGTL_DOCK_HEADSET         = AUDIO_DEVICE_NONE,
+    AUDIO_DEVICE_OUT_HDMI                      = AUDIO_DEVICE_OUT_AUX_DIGITAL,
+    /* uses an analog connection (multiplexed over the USB connector pins for instance) */
+    AUDIO_DEVICE_OUT_ANLG_DOCK_HEADSET         = 0x800,
+    AUDIO_DEVICE_OUT_DGTL_DOCK_HEADSET         = 0x1000,
+    /* USB accessory mode: your Android device is a USB device and the dock is a USB host */
     AUDIO_DEVICE_OUT_USB_ACCESSORY             = 0x2000,
+    /* USB host mode: your Android device is a USB host and the dock is a USB device */
     AUDIO_DEVICE_OUT_USB_DEVICE                = 0x4000,
     AUDIO_DEVICE_OUT_REMOTE_SUBMIX             = 0x8000,
-    AUDIO_DEVICE_OUT_ANC_HEADSET               = AUDIO_DEVICE_NONE,
     /* Telephony voice TX path */
-    AUDIO_DEVICE_OUT_TELEPHONY_TX              = AUDIO_DEVICE_NONE,
-    AUDIO_DEVICE_OUT_ANC_HEADPHONE             = AUDIO_DEVICE_NONE,
+    AUDIO_DEVICE_OUT_TELEPHONY_TX              = 0x10000,
     /* Analog jack with line impedance detected */
-    AUDIO_DEVICE_OUT_LINE                      = AUDIO_DEVICE_NONE,
+    AUDIO_DEVICE_OUT_LINE                      = 0x20000,
+    /* HDMI Audio Return Channel */
+    AUDIO_DEVICE_OUT_HDMI_ARC                  = 0x40000,
+    /* S/PDIF out */
+    AUDIO_DEVICE_OUT_SPDIF                     = 0x80000,
+    /* FM transmitter out */
+    AUDIO_DEVICE_OUT_FM                        = 0x100000,
+    /* Line out for av devices */
+    AUDIO_DEVICE_OUT_AUX_LINE                  = 0x200000,
+    /* limited-output speaker device for acoustic safety */
+    AUDIO_DEVICE_OUT_SPEAKER_SAFE              = 0x400000,
 #ifdef QCOM_HARDWARE
-    AUDIO_DEVICE_OUT_PROXY                     = 0x40000,
-    AUDIO_DEVICE_OUT_FM                        = 0x80000,
-    AUDIO_DEVICE_OUT_FM_TX                     = 0x100000,
-    AUDIO_DEVICE_OUT_SPDIF                     = 0x200000,
+    AUDIO_DEVICE_OUT_FM_TX                     = 0x1000000,
+    AUDIO_DEVICE_OUT_PROXY                     = 0x2000000,
 #endif
     AUDIO_DEVICE_OUT_DEFAULT                   = AUDIO_DEVICE_BIT_DEFAULT,
     AUDIO_DEVICE_OUT_ALL      = (AUDIO_DEVICE_OUT_EARPIECE |
@@ -690,22 +699,22 @@ enum {
                                  AUDIO_DEVICE_OUT_BLUETOOTH_A2DP |
                                  AUDIO_DEVICE_OUT_BLUETOOTH_A2DP_HEADPHONES |
                                  AUDIO_DEVICE_OUT_BLUETOOTH_A2DP_SPEAKER |
-                                 AUDIO_DEVICE_OUT_AUX_DIGITAL |
-//                                 AUDIO_DEVICE_OUT_HDMI |
-//                                 AUDIO_DEVICE_OUT_ANLG_DOCK_HEADSET |
-//                                 AUDIO_DEVICE_OUT_DGTL_DOCK_HEADSET |
-//                                 AUDIO_DEVICE_OUT_USB_ACCESSORY |
-//                                 AUDIO_DEVICE_OUT_USB_DEVICE |
+                                 AUDIO_DEVICE_OUT_HDMI |
+                                 AUDIO_DEVICE_OUT_ANLG_DOCK_HEADSET |
+                                 AUDIO_DEVICE_OUT_DGTL_DOCK_HEADSET |
+                                 AUDIO_DEVICE_OUT_USB_ACCESSORY |
+                                 AUDIO_DEVICE_OUT_USB_DEVICE |
                                  AUDIO_DEVICE_OUT_REMOTE_SUBMIX |
-//                                 AUDIO_DEVICE_OUT_TELEPHONY_TX |
-//                                 AUDIO_DEVICE_OUT_ANC_HEADSET |
-//                                 AUDIO_DEVICE_OUT_ANC_HEADPHONE |
-//                                 AUDIO_DEVICE_OUT_LINE |
-#ifdef QCOM_HARDWARE
-                                 AUDIO_DEVICE_OUT_PROXY |
-                                 AUDIO_DEVICE_OUT_FM |
-                                 AUDIO_DEVICE_OUT_FM_TX |
+                                 AUDIO_DEVICE_OUT_TELEPHONY_TX |
+                                 AUDIO_DEVICE_OUT_LINE |
+                                 AUDIO_DEVICE_OUT_HDMI_ARC |
                                  AUDIO_DEVICE_OUT_SPDIF |
+                                 AUDIO_DEVICE_OUT_FM |
+                                 AUDIO_DEVICE_OUT_AUX_LINE |
+                                 AUDIO_DEVICE_OUT_SPEAKER_SAFE |
+#ifdef QCOM_HARDWARE
+                                 AUDIO_DEVICE_OUT_FM_TX |
+                                 AUDIO_DEVICE_OUT_PROXY |
 #endif
                                  AUDIO_DEVICE_OUT_DEFAULT),
     AUDIO_DEVICE_OUT_ALL_A2DP = (AUDIO_DEVICE_OUT_BLUETOOTH_A2DP |
@@ -714,31 +723,37 @@ enum {
     AUDIO_DEVICE_OUT_ALL_SCO  = (AUDIO_DEVICE_OUT_BLUETOOTH_SCO |
                                  AUDIO_DEVICE_OUT_BLUETOOTH_SCO_HEADSET |
                                  AUDIO_DEVICE_OUT_BLUETOOTH_SCO_CARKIT),
-    AUDIO_DEVICE_OUT_ALL_USB  = (0x0),
+    AUDIO_DEVICE_OUT_ALL_USB  = (AUDIO_DEVICE_OUT_USB_ACCESSORY |
+                                 AUDIO_DEVICE_OUT_USB_DEVICE),
 
     /* input devices */
 #if defined(ICS_AUDIO_BLOB) || defined(MR0_AUDIO_BLOB)
     AUDIO_DEVICE_IN_COMMUNICATION         = AUDIO_DEVICE_BIT_IN * 0x1,
-    AUDIO_DEVICE_IN_AMBIENT               = AUDIO_DEVICE_NONE,
+    AUDIO_DEVICE_IN_AMBIENT               = AUDIO_DEVICE_BIT_IN * 0x2,
     AUDIO_DEVICE_IN_BUILTIN_MIC           = AUDIO_DEVICE_BIT_IN * 0x4,
     AUDIO_DEVICE_IN_BLUETOOTH_SCO_HEADSET = AUDIO_DEVICE_BIT_IN * 0x8,
     AUDIO_DEVICE_IN_WIRED_HEADSET         = AUDIO_DEVICE_BIT_IN * 0x10,
-    AUDIO_DEVICE_IN_AUX_DIGITAL           = AUDIO_DEVICE_NONE,
-    AUDIO_DEVICE_IN_HDMI                  = AUDIO_DEVICE_NONE,
-    AUDIO_DEVICE_IN_VOICE_CALL            = AUDIO_DEVICE_NONE,
-    AUDIO_DEVICE_IN_TELEPHONY_RX          = AUDIO_DEVICE_NONE,
+    AUDIO_DEVICE_IN_AUX_DIGITAL           = AUDIO_DEVICE_BIT_IN * 0x20,
+    AUDIO_DEVICE_IN_HDMI                  = AUDIO_DEVICE_IN_AUX_DIGITAL,
+    /* Telephony voice RX path */
+    AUDIO_DEVICE_IN_VOICE_CALL            = AUDIO_DEVICE_BIT_IN * 0x40,
+    AUDIO_DEVICE_IN_TELEPHONY_RX          = AUDIO_DEVICE_IN_VOICE_CALL,
     AUDIO_DEVICE_IN_BACK_MIC              = AUDIO_DEVICE_BIT_IN * 0x80,
     AUDIO_DEVICE_IN_REMOTE_SUBMIX         = AUDIO_DEVICE_BIT_IN * 0x100,
     AUDIO_DEVICE_IN_ANLG_DOCK_HEADSET     = AUDIO_DEVICE_BIT_IN * 0x200,
-    AUDIO_DEVICE_IN_DGTL_DOCK_HEADSET     = AUDIO_DEVICE_NONE,
-    AUDIO_DEVICE_IN_USB_ACCESSORY         = AUDIO_DEVICE_NONE,
-    AUDIO_DEVICE_IN_USB_DEVICE            = AUDIO_DEVICE_NONE,
-    AUDIO_DEVICE_IN_ANC_HEADSET           = AUDIO_DEVICE_NONE,
+    AUDIO_DEVICE_IN_DGTL_DOCK_HEADSET     = AUDIO_DEVICE_BIT_IN * 0x400,
+    AUDIO_DEVICE_IN_USB_ACCESSORY         = AUDIO_DEVICE_BIT_IN * 0x800,
+    AUDIO_DEVICE_IN_USB_DEVICE            = AUDIO_DEVICE_BIT_IN * 0x1000,
+    /* FM tuner input */
+    AUDIO_DEVICE_IN_FM_TUNER              = AUDIO_DEVICE_BIT_IN * 0x2000,
+    /* TV tuner input */
+    AUDIO_DEVICE_IN_TV_TUNER              = AUDIO_DEVICE_BIT_IN * 0x4000,
     /* Analog jack with line impedance detected */
-    AUDIO_DEVICE_IN_LINE                  = AUDIO_DEVICE_NONE,
-
-    AUDIO_DEVICE_IN_BLUETOOTH_A2DP        = AUDIO_DEVICE_NONE,
-
+    AUDIO_DEVICE_IN_LINE                  = AUDIO_DEVICE_BIT_IN | 0x8000,
+    /* S/PDIF in */
+    AUDIO_DEVICE_IN_SPDIF                 = AUDIO_DEVICE_BIT_IN | 0x10000,
+    AUDIO_DEVICE_IN_BLUETOOTH_A2DP        = AUDIO_DEVICE_BIT_IN | 0x20000,
+    AUDIO_DEVICE_IN_LOOPBACK              = AUDIO_DEVICE_BIT_IN | 0x40000,
     AUDIO_DEVICE_IN_DEFAULT               = AUDIO_DEVICE_IN_BUILTIN_MIC,
 #else
     AUDIO_DEVICE_IN_COMMUNICATION         = AUDIO_DEVICE_BIT_IN | 0x1,
@@ -747,46 +762,62 @@ enum {
     AUDIO_DEVICE_IN_BLUETOOTH_SCO_HEADSET = AUDIO_DEVICE_BIT_IN | 0x8,
     AUDIO_DEVICE_IN_WIRED_HEADSET         = AUDIO_DEVICE_BIT_IN | 0x10,
     AUDIO_DEVICE_IN_AUX_DIGITAL           = AUDIO_DEVICE_BIT_IN | 0x20,
+    AUDIO_DEVICE_IN_HDMI                  = AUDIO_DEVICE_IN_AUX_DIGITAL,
+    /* Telephony voice RX path */
     AUDIO_DEVICE_IN_VOICE_CALL            = AUDIO_DEVICE_BIT_IN | 0x40,
+    AUDIO_DEVICE_IN_TELEPHONY_RX          = AUDIO_DEVICE_IN_VOICE_CALL,
     AUDIO_DEVICE_IN_BACK_MIC              = AUDIO_DEVICE_BIT_IN | 0x80,
     AUDIO_DEVICE_IN_REMOTE_SUBMIX         = AUDIO_DEVICE_BIT_IN | 0x100,
     AUDIO_DEVICE_IN_ANLG_DOCK_HEADSET     = AUDIO_DEVICE_BIT_IN | 0x200,
     AUDIO_DEVICE_IN_DGTL_DOCK_HEADSET     = AUDIO_DEVICE_BIT_IN | 0x400,
     AUDIO_DEVICE_IN_USB_ACCESSORY         = AUDIO_DEVICE_BIT_IN | 0x800,
     AUDIO_DEVICE_IN_USB_DEVICE            = AUDIO_DEVICE_BIT_IN | 0x1000,
-    AUDIO_DEVICE_IN_ANC_HEADSET           = AUDIO_DEVICE_BIT_IN | 0x2000,
-#ifdef QCOM_HARDWARE
-    AUDIO_DEVICE_IN_PROXY                 = AUDIO_DEVICE_BIT_IN | 0x4000,
-    AUDIO_DEVICE_IN_FM_RX                 = AUDIO_DEVICE_BIT_IN | 0x8000,
-    AUDIO_DEVICE_IN_FM_RX_A2DP            = AUDIO_DEVICE_BIT_IN | 0x10000,
-#endif
+    /* FM tuner input */
+    AUDIO_DEVICE_IN_FM_TUNER              = AUDIO_DEVICE_BIT_IN | 0x2000,
+    /* TV tuner input */
+    AUDIO_DEVICE_IN_TV_TUNER              = AUDIO_DEVICE_BIT_IN | 0x4000,
+    /* Analog jack with line impedance detected */
+    AUDIO_DEVICE_IN_LINE                  = AUDIO_DEVICE_BIT_IN | 0x8000,
+    /* S/PDIF in */
+    AUDIO_DEVICE_IN_SPDIF                 = AUDIO_DEVICE_BIT_IN | 0x10000,
     AUDIO_DEVICE_IN_BLUETOOTH_A2DP        = AUDIO_DEVICE_BIT_IN | 0x20000,
+    AUDIO_DEVICE_IN_LOOPBACK              = AUDIO_DEVICE_BIT_IN | 0x40000,
+#ifdef QCOM_HARDWARE
+    AUDIO_DEVICE_IN_PROXY                 = AUDIO_DEVICE_BIT_IN | 0x100000,
+    AUDIO_DEVICE_IN_FM_RX                 = AUDIO_DEVICE_BIT_IN | 0x200000,
+    AUDIO_DEVICE_IN_FM_RX_A2DP            = AUDIO_DEVICE_BIT_IN | 0x400000,
+#endif
     AUDIO_DEVICE_IN_DEFAULT               = AUDIO_DEVICE_BIT_IN | AUDIO_DEVICE_BIT_DEFAULT,
 #endif
 
     AUDIO_DEVICE_IN_ALL     = (AUDIO_DEVICE_IN_COMMUNICATION |
-//                               AUDIO_DEVICE_IN_AMBIENT |
+                               AUDIO_DEVICE_IN_AMBIENT |
                                AUDIO_DEVICE_IN_BUILTIN_MIC |
                                AUDIO_DEVICE_IN_BLUETOOTH_SCO_HEADSET |
                                AUDIO_DEVICE_IN_WIRED_HEADSET |
-//                               AUDIO_DEVICE_IN_HDMI |
-//                               AUDIO_DEVICE_IN_TELEPHONY_RX |
+                               AUDIO_DEVICE_IN_HDMI |
+                               AUDIO_DEVICE_IN_TELEPHONY_RX |
                                AUDIO_DEVICE_IN_BACK_MIC |
                                AUDIO_DEVICE_IN_REMOTE_SUBMIX |
                                AUDIO_DEVICE_IN_ANLG_DOCK_HEADSET |
-//                               AUDIO_DEVICE_IN_DGTL_DOCK_HEADSET |
-//                               AUDIO_DEVICE_IN_USB_ACCESSORY |
-//                               AUDIO_DEVICE_IN_USB_DEVICE |
-//                              AUDIO_DEVICE_IN_ANC_HEADSET |
-//                               AUDIO_DEVICE_IN_LINE |
+                               AUDIO_DEVICE_IN_DGTL_DOCK_HEADSET |
+                               AUDIO_DEVICE_IN_USB_ACCESSORY |
+                               AUDIO_DEVICE_IN_USB_DEVICE |
+                               AUDIO_DEVICE_IN_FM_TUNER |
+                               AUDIO_DEVICE_IN_TV_TUNER |
+                               AUDIO_DEVICE_IN_LINE |
+                               AUDIO_DEVICE_IN_SPDIF |
+                               AUDIO_DEVICE_IN_BLUETOOTH_A2DP |
+                               AUDIO_DEVICE_IN_LOOPBACK |
 #ifdef QCOM_HARDWARE
-                               AUDIO_DEVICE_IN_PROXY |
                                AUDIO_DEVICE_IN_FM_RX |
                                AUDIO_DEVICE_IN_FM_RX_A2DP |
+                               AUDIO_DEVICE_IN_PROXY |
 #endif
                                AUDIO_DEVICE_IN_DEFAULT),
     AUDIO_DEVICE_IN_ALL_SCO = AUDIO_DEVICE_IN_BLUETOOTH_SCO_HEADSET,
-    AUDIO_DEVICE_IN_ALL_USB  = (0x0),
+    AUDIO_DEVICE_IN_ALL_USB  = (AUDIO_DEVICE_IN_USB_ACCESSORY |
+                                AUDIO_DEVICE_IN_USB_DEVICE),
 };
 
 typedef uint32_t audio_devices_t;
@@ -1164,11 +1195,11 @@ static inline bool audio_is_output_devices(audio_devices_t device)
 
 static inline bool audio_is_a2dp_in_device(audio_devices_t device)
 {
-//    if ((device & AUDIO_DEVICE_BIT_IN) != 0) {
-//        device &= ~AUDIO_DEVICE_BIT_IN;
-//        if ((popcount(device) == 1) && (device & AUDIO_DEVICE_IN_BLUETOOTH_A2DP))
-//            return true;
-//    }
+    if ((device & AUDIO_DEVICE_BIT_IN) != 0) {
+        device &= ~AUDIO_DEVICE_BIT_IN;
+        if ((popcount(device) == 1) && (device & AUDIO_DEVICE_IN_BLUETOOTH_A2DP))
+            return true;
+    }
     return false;
 }
 
@@ -1202,16 +1233,16 @@ static inline bool audio_is_bluetooth_sco_device(audio_devices_t device)
 
 static inline bool audio_is_usb_out_device(audio_devices_t device)
 {
-    return false; //((popcount(device) == 1) && (device & AUDIO_DEVICE_OUT_ALL_USB));
+    return ((popcount(device) == 1) && (device & AUDIO_DEVICE_OUT_ALL_USB));
 }
 
 static inline bool audio_is_usb_in_device(audio_devices_t device)
 {
-//    if ((device & AUDIO_DEVICE_BIT_IN) != 0) {
-//        device &= ~AUDIO_DEVICE_BIT_IN;
-//        if (popcount(device) == 1 && (device & AUDIO_DEVICE_IN_ALL_USB) != 0)
-//            return true;
-//    }
+    if ((device & AUDIO_DEVICE_BIT_IN) != 0) {
+        device &= ~AUDIO_DEVICE_BIT_IN;
+        if (popcount(device) == 1 && (device & AUDIO_DEVICE_IN_ALL_USB) != 0)
+            return true;
+    }
     return false;
 }
 
