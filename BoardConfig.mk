@@ -5,7 +5,7 @@
 TARGET_BUILD_VARIANT := userdebug
 
 #GCC
-TARGET_GCC_VERSION_EXP := 4.8-sm
+TARGET_GCC_VERSION_EXP := 4.9-ub
 # This is needed for GCC 4.9-sm
 #COMMON_GLOBAL_CFLAGS += -Wno-maybe-uninitialized
 KERNEL_TOOLCHAIN_PREFIX := arm-eabi-
