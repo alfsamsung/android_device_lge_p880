@@ -52,3 +52,10 @@ debug.choreographer.skipwarning=99
 
 # lollipop hwui, disable dirty regions invalidation
 debug.hwui.render_dirty_regions=false
+
+#Scrolling cache
+#0 = force to enable scrollingCacheEnabled regardless of app setting
+#1 = default is to enable scrollingCacheEnabled unless app specifies
+#2 = default is to disable scrollingCacheEnabled unless app specifies
+#3 = force to disable scrollingCacheEnabled regardless of app setting
+persist.sys.scrollingcache=2
