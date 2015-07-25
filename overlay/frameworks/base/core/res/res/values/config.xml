@@ -184,7 +184,7 @@
          allows more memory to be used by processes but may cause more allocations to block
          waiting on disk I/O or lowmemorykiller.  Directly added to the default value chosen by
          ActivityManager based on screen size. -->
-    <integer name="config_extraFreeKbytesAdjust">4096</integer>
+    <integer name="config_extraFreeKbytesAdjust">12288</integer>
 
     <!-- Minimum screen brightness allowed by the power manager. -->
     <integer name="config_screenBrightnessDim">1</integer>
