@@ -53,6 +53,29 @@ debug.choreographer.skipwarning=99
 # lollipop hwui, disable dirty regions invalidation
 debug.hwui.render_dirty_regions=false
 
+#Runtime: Disable JIT, register map and enable precise GC
+dalvik.vm.jit.codecachesize=0
+dalvik.vm.dexopt-flags=m=y
+
+#drm TEST
+drm.service.enabled=true
+persist.sys.media.legacy-drm=true
+
+#max cached apps #def:32 Kitkat:24
+ro.sys.fw.bg_apps_limit=26
+
+#PROCESS LIST TRIM SETTINGS
+ro.sys.fw.use_trim_settings=false
+#Max empty apps, % of max cached apps #50
+ro.sys.fw.empty_app_percent=30
+# % of empty apps at which we don't trim. #100
+#ro.sys.fw.trim_empty_percent=70
+# % of cached apps at which we don't trim. #100
+#ro.sys.fw.trim_cache_percent=40
+
+#Enable B service aging propagation on memory pressure.
+ro.sys.fw.bservice_enable=true 
+
 #Scrolling cache
 #0 = force to enable scrollingCacheEnabled regardless of app setting
 #1 = default is to enable scrollingCacheEnabled unless app specifies

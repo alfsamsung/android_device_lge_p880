@@ -10,9 +10,11 @@ PRODUCT_AAPT_PREF_CONFIG := xhdpi
 PRODUCT_AAPT_PREBUILT_DPI := hdpi
 
 #Misc buid.prop tweaks
+#Disable process stack trace
 PRODUCT_PROPERTY_OVERRIDES += \
     ro.ril.hsxpa=2 \
-    ro.ril.gprsclass=10
+    ro.ril.gprsclass=10 \
+    dalvik.vm.stack-trace-file=""
 
 PRODUCT_BUILD_PROP_OVERRIDES += BUILD_UTC_DATE=0
 

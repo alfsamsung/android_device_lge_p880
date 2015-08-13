@@ -7,7 +7,7 @@ TARGET_BUILD_VARIANT := userdebug
 #GCC
 TARGET_GCC_VERSION_EXP := 4.9-ub
 KERNEL_TOOLCHAIN_PREFIX := arm-eabi-
-KERNEL_TOOLCHAIN := $(ANDROID_BUILD_TOP)/prebuilts/gcc/$(HOST_OS)-x86/arm/arm-eabi-5.1-ar/bin/
+KERNEL_TOOLCHAIN := $(ANDROID_BUILD_TOP)/prebuilts/gcc/$(HOST_OS)-x86/arm/arm-eabi-5.1-ub/bin/
 
 # Skip droiddoc build to save build time
 BOARD_SKIP_ANDROID_DOC_BUILD := true
@@ -44,6 +44,8 @@ BOARD_USERDATAIMAGE_PARTITION_SIZE := 13375635456 # 12.3GB
 BOARD_FLASH_BLOCK_SIZE := 131072 # (BOARD_KERNEL_PAGESIZE * 64)
 BOARD_HAS_LARGE_FILESYSTEM := true
 TARGET_USERIMAGES_USE_EXT4 := true
+# Disable journaling on system.img to save space.
+BOARD_SYSTEMIMAGE_JOURNAL_SIZE := 0
 
 # Build the kernel
 BOARD_KERNEL_CMDLINE := androidboot.selinux=permissive
@@ -97,10 +99,10 @@ COMMON_GLOBAL_CFLAGS += -DMR0_AUDIO_BLOB -DMR0_CAMERA_BLOB -DNEEDS_VECTORIMPL_SY
 
 # Enable various build optimizations
 COMMON_GLOBAL_CFLAGS += -D__ARM_USE_PLD -D__ARM_CACHE_LINE_SIZE=32
-TARGET_GLOBAL_CFLAGS += -mtune=cortex-a9 -mfpu=neon -mfloat-abi=softfp \
-        -mvectorize-with-neon-quad
-TARGET_GLOBAL_CPPFLAGS += -mtune=cortex-a9 -mfpu=neon -mfloat-abi=softfp \
-        -mvectorize-with-neon-quad
+TARGET_GLOBAL_CFLAGS += -mtune=cortex-a9 -mfpu=neon -mfloat-abi=softfp -mvectorize-with-neon-quad \
+        --param l1-cache-line-size=32 --param l1-cache-size=32 --param l2-cache-size=1024
+TARGET_GLOBAL_CPPFLAGS += -mtune=cortex-a9 -mfpu=neon -mfloat-abi=softfp -mvectorize-with-neon-quad \
+        --param l1-cache-line-size=32 --param l1-cache-size=32 --param l2-cache-size=1024
 
 # Kitkat
 BOARD_HAVE_PRE_KITKAT_AUDIO_BLOB := true

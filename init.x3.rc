@@ -225,7 +225,9 @@ on boot
 
     #Misc tweaks
     write /proc/sys/vm/highmem_is_dirtyable 1
-    write /proc/sys/vm/min_free_kbytes 8192
+    write /proc/sys/vm/wmark_high_kbytes 8628
+    write /proc/sys/vm/wmark_low_kbytes 7190
+    write /proc/sys/vm/wmark_min_kbytes 5752
 
     # KSM
     chown root system /sys/kernel/mm/ksm/run
