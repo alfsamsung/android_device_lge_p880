@@ -62,12 +62,12 @@ drm.service.enabled=true
 persist.sys.media.legacy-drm=true
 
 #max cached apps #def:32 Kitkat:24
-ro.sys.fw.bg_apps_limit=26
+ro.sys.fw.bg_apps_limit=24
 
 #PROCESS LIST TRIM SETTINGS
 ro.sys.fw.use_trim_settings=false
 #Max empty apps, % of max cached apps #50
-ro.sys.fw.empty_app_percent=30
+ro.sys.fw.empty_app_percent=40
 # % of empty apps at which we don't trim. #100
 #ro.sys.fw.trim_empty_percent=70
 # % of cached apps at which we don't trim. #100
@@ -82,3 +82,6 @@ ro.sys.fw.bservice_enable=true
 #2 = default is to disable scrollingCacheEnabled unless app specifies
 #3 = force to disable scrollingCacheEnabled regardless of app setting
 persist.sys.scrollingcache=2
+
+#Audioflinger memory alloc multiplier #2, min=1 max=2
+af.fast_track_multiplier=1
