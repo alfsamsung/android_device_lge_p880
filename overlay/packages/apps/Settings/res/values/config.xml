@@ -19,7 +19,7 @@
     <!-- Carrier_enabled editable -->
     <bool name="config_allow_edit_carrier_enabled" translatable="false">true</bool>
 
-    <!-- Processor menu, freq cap files -->
-    <string name="max_cpu_freq_file" translatable="false">/sys/module/cpu_tegra/parameters/cpu_user_cap</string>
-
+    <!-- This is used to determine whether to hide the
+         preferred application install location settings-->
+    <bool name="config_hide_app_install_location" translatable="false">false</bool>
 </resources>
