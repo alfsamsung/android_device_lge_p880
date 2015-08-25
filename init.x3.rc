@@ -53,6 +53,10 @@ on fs
     # Create this file in case it doesn't exist, needed to switch wifi modes:
     write /data/misc/wifi/firmware_path ""
     chmod 0666 /data/misc/wifi/firmware_path
+    
+    # Zram
+    swapon_all fstab.x3
+    write /proc/sys/vm/swappiness 50
 
     setprop ro.crypto.fuse_sdcard true
 
@@ -228,6 +232,8 @@ on boot
     write /proc/sys/vm/wmark_high_kbytes 8628
     write /proc/sys/vm/wmark_low_kbytes 7190
     write /proc/sys/vm/wmark_min_kbytes 5752
+    write /proc/sys/kernel/random/write_wakeup_threshold 2048
+    write /proc/sys/kernel/random/read_wakeup_threshold 1024
 
     # KSM
     chown root system /sys/kernel/mm/ksm/run
@@ -278,7 +284,7 @@ service lgsecclk /system/bin/lgsecclkserver
 service lgdrm /system/bin/lgdrmserver
     class main
     user system
-    group sdcard_rw media_rw system radio media
+    group sdcard_rw media_rw system radio media drm drmrpc
 
 service tf_daemon /system/bin/tf_daemon -storageDir /cal/widevine -d
     class main
