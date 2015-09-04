@@ -54,9 +54,6 @@
 /dev/pts29	0660	media	media
 /sys/devices/system/cpu/cpufreq/gov_interactive* ../interactive/max_boost 0644 system system
 /sys/devices/system/cpu/cpufreq/gov_interactive* ../interactive/go_maxspeed_load 0644 system system
-/sys/devices/system/cpu/cpu*   cpufreq/scaling_max_freq   0664  system system
-/sys/devices/system/cpu/cpu*   cpufreq/scaling_min_freq   0664  system system
-/sys/devices/system/cpu/cpu*   cpufreq/scaling_governor   0664  system system
 
 /dev/rfkill               0660   wifi       wifi
 # GPS

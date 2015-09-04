@@ -383,10 +383,12 @@ on property:init.svc.bootanim=stopped
     write /sys/devices/system/cpu/cpu3/cpufreq/scaling_governor interactive
     chown system system /sys/devices/system/cpu/cpufreq/interactive/cores_states
     chmod 0644 /sys/devices/system/cpu/cpufreq/interactive/cores_states
-    chown system system /sys/devices/system/cpu/cpu0/cpufreq/scaling_max_freq
-    chmod 0644 /sys/devices/system/cpu/cpu0/cpufreq/scaling_max_freq
     write /sys/module/cpu_tegra/parameters/force_policy_max Y
     write /sys/module/cpuidle/parameters/lp2_in_idle 1
+
+    # Allow Overclock via scaling_max_freq
+    write /sys/module/cpu_tegra/parameters/cpu_user_cap 1700000
+    write /sys/devices/system/cpu/cpu0/cpufreq/scaling_max_freq 1500000
 
     # Interactive dynamic frequecy mode settings
     write /sys/devices/system/cpu/cpufreq/interactive/io_is_busy 1
