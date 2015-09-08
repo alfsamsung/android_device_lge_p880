@@ -1,4 +1,4 @@
-From 414a7635c07b9122eb28bfb0c3754843653f98d6 Mon Sep 17 00:00:00 2001
+From b1fba1c74b2dde35d84bfbd8c3c1d97da8c92baf Mon Sep 17 00:00:00 2001
 From: =?UTF-8?q?=C5=81ukasz=20Domeradzki?= <JustArchi@JustArchi.net>
 Date: Tue, 24 Mar 2015 03:10:38 +0100
 Subject: [PATCH] [PATCH] JustArchi's ArchiDroid Optimizations V4
@@ -57,22 +57,28 @@ Important changes:
 ----------------------------------------------------------------------------------------------------------------
 
 For more information, support, troubleshooting and discussion about my optimizations, please refer to my thread on XDA -> http://forum.xda-developers.com/showthread.php?t=2754997
+
+Update JustArchi's ArchiDroid Optimizations V4 to V4.1
+
+Change-Id: I7432920dd2a9359c438171eee3733d25fc5787e2
+Source: https://github.com/ArchiDroid/android_build/commit/f9b983e8e11624b48ae575da206f1baf6979772c
 ---
- core/Makefile                   |   5 ++
- core/archidroid.mk              | 121 ++++++++++++++++++++++++++++++++++++++++
- core/clang/config.mk            |   7 +++
- core/combo/HOST_linux-x86.mk    |   2 +-
- core/combo/HOST_linux-x86_64.mk |   2 +-
- core/combo/TARGET_linux-arm.mk  |  14 +++--
- core/combo/select.mk            |   2 +-
- 7 files changed, 146 insertions(+), 7 deletions(-)
+ core/Makefile                    |   5 ++
+ core/archidroid.mk               | 119 +++++++++++++++++++++++++++++++++++++++
+ core/clang/config.mk             |   7 +++
+ core/combo/HOST_linux-x86.mk     |   2 +-
+ core/combo/HOST_linux-x86_64.mk  |   2 +-
+ core/combo/TARGET_linux-arm.mk   |  14 +++--
+ core/combo/TARGET_linux-arm64.mk |   9 ++-
+ core/combo/select.mk             |   5 +-
+ 8 files changed, 155 insertions(+), 8 deletions(-)
  create mode 100644 core/archidroid.mk
 
 diff --git a/core/Makefile b/core/Makefile
-index fd79104..5c012ad 100644
+index cea5573..66a6e1f 100644
 --- a/core/Makefile
 +++ b/core/Makefile
-@@ -859,6 +859,9 @@ endif
+@@ -870,6 +870,9 @@ endif
  # substitute other keys for this one.
  OTA_PUBLIC_KEYS := $(DEFAULT_SYSTEM_DEV_CERTIFICATE).x509.pem
  
@@ -82,7 +88,7 @@ index fd79104..5c012ad 100644
  # Generate a file containing the keys that will be read by the
  # recovery binary.
  RECOVERY_INSTALL_OTA_KEYS := \
-@@ -914,7 +917,9 @@ $(INSTALLED_RECOVERYIMAGE_TARGET): $(MKBOOTIMG) $(recovery_ramdisk) \
+@@ -925,7 +928,9 @@ $(INSTALLED_RECOVERYIMAGE_TARGET): $(MKBOOTIMG) $(recovery_ramdisk) \
  ifeq (true,$(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_SUPPORTS_VERITY))
  	$(BOOT_SIGNER) /recovery $@ $(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_VERITY_SIGNING_KEY).pk8 $(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_VERITY_SIGNING_KEY).x509.pem $@
  endif
@@ -94,10 +100,10 @@ index fd79104..5c012ad 100644
  endif # BOARD_CUSTOM_BOOTIMG_MK
 diff --git a/core/archidroid.mk b/core/archidroid.mk
 new file mode 100644
-index 0000000..b6efdfa
+index 0000000..7a5ed73
 --- /dev/null
 +++ b/core/archidroid.mk
-@@ -0,0 +1,121 @@
+@@ -0,0 +1,119 @@
 +#     _             _     _ ____            _     _
 +#    / \   _ __ ___| |__ (_)  _ \ _ __ ___ (_) __| |
 +#   / _ \ | '__/ __| '_ \| | | | | '__/ _ \| |/ _` |
@@ -119,7 +125,9 @@ index 0000000..b6efdfa
 +# See the License for the specific language governing permissions and
 +# limitations under the License.
 +
-+# GCC
++#######################
++### GENERAL SECTION ###
++#######################
 +
 +# General optimization level of target ARM compiled with GCC. Default: -O2
 +ARCHIDROID_GCC_CFLAGS_ARM := -O3
@@ -134,43 +142,38 @@ index 0000000..b6efdfa
 +### EXPERIMENTAL SECTION ###
 +############################
 +
-+# The following flags were tested, and found to be causing compilation issues / other problems
++# Flags in this section are highly experimental
++# Current setup is based on proposed androideabi toolchain
++# Results with other toolchains may vary
 +
++# These flags work fine in suggested compiler, but may cause ICEs in other compilers, comment if needed
++ARCHIDROID_GCC_CFLAGS += -fgraphite -fgraphite-identity
++
++# The following flags (-floop) require that your GCC has been configured with --with-isl
++# Additionally, applying any of them will most likely cause ICE in your compiler, so they're disabled
++# ARCHIDROID_GCC_CFLAGS += -floop-block -floop-interchange -floop-nest-optimize -floop-parallelize-all -floop-strip-mine
++
++# These flags have been disabled because of assembler errors
 +# ARCHIDROID_GCC_CFLAGS += -fmodulo-sched -fmodulo-sched-allow-regmoves
-+# Disabled because of:
-+# {standard input}: Assembler messages:
-+# {standard input}:571: Error: symbol `.LPIC38' is already defined
-+# external/chromium_org/third_party/zlib/crc32.c
 +
-+# If your arm-linux-androideabi includes support for graphite optimization flags (CLooG), enable additional flags
++####################
++### MISC SECTION ###
++####################
 +
-+# ARCHIDROID_GCC_CFLAGS += -fgraphite
-+# Disabled because of internal compiler error:
-+# 0x5ceefc gsi_for_stmt(gimple_statement_d*)
-+# 0xa8788e insert_out_of_ssa_copy
-+# 0xa87ede rewrite_phi_out_of_ssa
-+# 0xa8e233 rewrite_reductions_out_of_ssa
-+# 0xa8e233 build_poly_scop(scop*)
-+# 0xa79686 graphite_transform_loops()
-+# 0x7dca56 graphite_transforms
-+
-+############################
-+### EXPERIMENTAL SECTION ###
-+############################
-+
-+# Flags passed to all C++ targets compiled with GCC
++# Flags passed to GCC preprocessor for C and C++
 +ARCHIDROID_GCC_CPPFLAGS := $(ARCHIDROID_GCC_CFLAGS)
 +
 +# Flags passed to linker (ld) of all C and C++ targets compiled with GCC
 +ARCHIDROID_GCC_LDFLAGS := -Wl,--sort-common
 +
-+
-+# CLANG
++#####################
++### CLANG SECTION ###
++#####################
 +
 +# Flags passed to all C targets compiled with CLANG
 +ARCHIDROID_CLANG_CFLAGS := -O3 -Qunused-arguments -Wno-unknown-warning-option
 +
-+# Flags passed to all C++ targets compiled with CLANG
++# Flags passed to CLANG preprocessor for C and C++
 +ARCHIDROID_CLANG_CPPFLAGS := $(ARCHIDROID_CLANG_CFLAGS)
 +
 +# Flags passed to linker (ld) of all C and C++ targets compiled with CLANG
@@ -205,8 +208,9 @@ index 0000000..b6efdfa
 +  -funsafe-loop-optimizations \
 +  -fweb
 +
-+
-+# General
++#####################
++### HACKS SECTION ###
++#####################
 +
 +# Most of the flags are increasing code size of the output binaries, especially O3 instead of Os for target THUMB
 +# This may become problematic for small blocks, especially for boot or recovery blocks (ramdisks)
@@ -318,16 +322,49 @@ index 95b1804..ca7896b 100644
  			-Wstrict-aliasing=2 \
  			-fgcse-after-reload \
  			-frerun-cse-after-loop \
+diff --git a/core/combo/TARGET_linux-arm64.mk b/core/combo/TARGET_linux-arm64.mk
+index df6c127..cdbeb2e 100644
+--- a/core/combo/TARGET_linux-arm64.mk
++++ b/core/combo/TARGET_linux-arm64.mk
+@@ -115,10 +115,17 @@ TARGET_GLOBAL_LDFLAGS += \
+ 
+ TARGET_GLOBAL_CPPFLAGS += -fvisibility-inlines-hidden
+ 
++# ArchiDroid
++include $(BUILD_SYSTEM)/archidroid.mk
++
++$(combo_2nd_arch_prefix)TARGET_GLOBAL_CFLAGS += $(ARCHIDROID_GCC_CFLAGS)
++$(combo_2nd_arch_prefix)TARGET_GLOBAL_CPPFLAGS += $(ARCHIDROID_GCC_CPPFLAGS)
++$(combo_2nd_arch_prefix)TARGET_GLOBAL_LDFLAGS += $(ARCHIDROID_GCC_LDFLAGS)
++
+ # More flags/options can be added here
+ TARGET_RELEASE_CFLAGS := \
+ 			-DNDEBUG \
+-			-O2 -g \
++			$(ARCHIDROID_GCC_CFLAGS_ARM) \
+ 			-Wstrict-aliasing=2 \
+ 			-fgcse-after-reload \
+ 			-frerun-cse-after-loop \
 diff --git a/core/combo/select.mk b/core/combo/select.mk
-index d495c6f..3445795 100644
+index bb2d3b1..3f3bb10 100644
 --- a/core/combo/select.mk
 +++ b/core/combo/select.mk
-@@ -50,7 +50,7 @@ $(combo_var_prefix)HAVE_STRLCAT := 0
+@@ -26,6 +26,9 @@ combo_os_arch := $($(combo_target)OS)-$($(combo_target)$(combo_2nd_arch_prefix)A
+ 
+ combo_var_prefix := $(combo_2nd_arch_prefix)$(combo_target)
+ 
++# ArchiDroid
++include $(BUILD_SYSTEM)/archidroid.mk
++
+ # Set reasonable defaults for the various variables
+ 
+ $(combo_var_prefix)CC := $(CC)
+@@ -50,7 +53,7 @@ $(combo_var_prefix)HAVE_STRLCAT := 0
  $(combo_var_prefix)HAVE_KERNEL_MODULES := 0
  
  $(combo_var_prefix)GLOBAL_CFLAGS := -fno-exceptions -Wno-multichar
 -$(combo_var_prefix)RELEASE_CFLAGS := -O2 -g -fno-strict-aliasing
-+$(combo_var_prefix)RELEASE_CFLAGS := -O3 -fno-strict-aliasing
++$(combo_var_prefix)RELEASE_CFLAGS := $(ARCHIDROID_GCC_CFLAGS_ARM) -fno-strict-aliasing
  $(combo_var_prefix)GLOBAL_CPPFLAGS :=
  $(combo_var_prefix)GLOBAL_LDFLAGS :=
  $(combo_var_prefix)GLOBAL_ARFLAGS := crsPD
