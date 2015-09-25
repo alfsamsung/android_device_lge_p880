@@ -100,10 +100,12 @@ COMMON_GLOBAL_CFLAGS += -DMR0_AUDIO_BLOB -DMR0_CAMERA_BLOB -DNEEDS_VECTORIMPL_SY
 
 # Enable various build optimizations
 COMMON_GLOBAL_CFLAGS += -D__ARM_USE_PLD -D__ARM_CACHE_LINE_SIZE=32
-TARGET_GLOBAL_CFLAGS += -mtune=cortex-a9 -mfpu=neon -mfloat-abi=softfp -mvectorize-with-neon-quad \
-        --param l1-cache-line-size=32 --param l1-cache-size=32 --param l2-cache-size=1024
-TARGET_GLOBAL_CPPFLAGS += -mtune=cortex-a9 -mfpu=neon -mfloat-abi=softfp -mvectorize-with-neon-quad \
-        --param l1-cache-line-size=32 --param l1-cache-size=32 --param l2-cache-size=1024
+TARGET_GLOBAL_CFLAGS += -mtune=cortex-a9 -mfpu=neon-fp16 -mfp16-format=alternative \
+          -mfloat-abi=softfp -mvectorize-with-neon-quad --param l1-cache-line-size=32 \
+          --param l1-cache-size=32 --param l2-cache-size=1024
+TARGET_GLOBAL_CPPFLAGS += -mtune=cortex-a9 -mfpu=neon-fp16 -mfp16-format=alternative \
+          -mfloat-abi=softfp -mvectorize-with-neon-quad --param l1-cache-line-size=32 \
+          --param l1-cache-size=32 --param l2-cache-size=1024
 
 # Kitkat
 BOARD_HAVE_PRE_KITKAT_AUDIO_BLOB := true
