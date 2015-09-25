@@ -5,7 +5,7 @@
 TARGET_BUILD_VARIANT := userdebug
 
 #GCC
-TARGET_GCC_VERSION_EXP := 4.9-ub
+TARGET_GCC_VERSION_EXP := 4.9-sm
 KERNEL_TOOLCHAIN_PREFIX := arm-eabi-
 KERNEL_TOOLCHAIN := $(ANDROID_BUILD_TOP)/prebuilts/gcc/$(HOST_OS)-x86/arm/arm-eabi-5.2-ub/bin/
 
