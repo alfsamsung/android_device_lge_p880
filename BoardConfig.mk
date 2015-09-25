@@ -74,6 +74,7 @@ BOARD_CUSTOM_RECOVERY_KEYMAPPING := ../../device/lge/p880/recovery-keys.c
 # Egl
 BOARD_EGL_CFG := device/lge/p880/egl.cfg
 USE_OPENGL_RENDERER := true
+HWUI_COMPILE_FOR_PERF := true
 
 # Wifi related defines
 WPA_SUPPLICANT_VERSION := VER_0_8_X
