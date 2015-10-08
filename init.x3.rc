@@ -221,7 +221,7 @@ on boot
 
     #Give nvaudio_hw acess to /sys/power/suspend/mode
     chmod 0660 /sys/power/suspend/mode
-    chown system system /sys/power/suspend/mode
+    chown system audio /sys/power/suspend/mode
 
     #Give telephony manager read rights
     chmod 0444 /proc/cmdline
