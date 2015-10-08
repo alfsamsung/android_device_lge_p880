@@ -62,7 +62,7 @@ drm.service.enabled=true
 persist.sys.media.legacy-drm=true
 
 #max cached apps #def:32 Kitkat:24
-ro.sys.fw.bg_apps_limit=24
+ro.sys.fw.bg_apps_limit=22
 
 #PROCESS LIST TRIM SETTINGS
 ro.sys.fw.use_trim_settings=false
