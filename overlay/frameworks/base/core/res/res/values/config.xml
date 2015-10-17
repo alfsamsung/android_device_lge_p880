@@ -175,7 +175,7 @@
          thrashing if set too low.  Overrides the default value chosen by ActivityManager
          based on screen size and total memory for the largest lowmemorykiller bucket, and
          scaled proportionally to the smaller buckets.  -1 keeps the default. -->
-    <integer name="config_lowMemoryKillerMinFreeKbytesAbsolute">164000</integer>
+    <integer name="config_lowMemoryKillerMinFreeKbytesAbsolute">-1</integer>
 
     <!-- Device configuration adjusting the /proc/sys/vm/extra_free_kbytes tunable in the kernel
          (if it exists).  0 uses the default value chosen by ActivityManager.  A positive value

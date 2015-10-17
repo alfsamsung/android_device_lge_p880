@@ -1,0 +1,30 @@
+From dd13cc265afbf7147b3242f9d12c92ada2668f70 Mon Sep 17 00:00:00 2001
+From: alfsamsung <alfsamsung@hotmail.com>
+Date: Sat, 17 Oct 2015 13:26:47 +0200
+Subject: [PATCH] ProcessList: Tune lowmemorykiller
+
+Change-Id: I0c63074f882684831b50d6958f609b05b6c6c2cb
+---
+ services/core/java/com/android/server/am/ProcessList.java           | 6 ++++--
+ 1 files changed, 4 insertions(+), 2 deletions(-)
+
+diff --git a/services/core/java/com/android/server/am/ProcessList.java b/services/core/java/com/android/server/am/ProcessList.java
+index 2bf7bb2..bdbe5e4 100755
+--- a/services/core/java/com/android/server/am/ProcessList.java
++++ b/services/core/java/com/android/server/am/ProcessList.java
+@@ -207,8 +207,10 @@ final class ProcessList {
+     };
+     // These are the high-end OOM level limits for 32bit
+     private final int[] mOomMinFreeHigh32Bit = new int[] {
+-            49152, 61440, 73728,
+-            86016, 98304, 122880
++              18432, 24576, 36864,
++              75728, 110592, 147456
++//            49152, 61440, 73728,
++//            86016, 98304, 122880
+     };
+     // These are the low-end OOM level limits.  This is appropriate for an
+     // HVGA or smaller phone with less than 512MB.  Values are in KB.
+-- 
+1.9.1
+

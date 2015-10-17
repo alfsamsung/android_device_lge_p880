@@ -65,9 +65,9 @@ persist.sys.media.legacy-drm=true
 ro.sys.fw.bg_apps_limit=22
 
 #PROCESS LIST TRIM SETTINGS
-ro.sys.fw.use_trim_settings=false
+#ro.sys.fw.use_trim_settings=false
 #Max empty apps, % of max cached apps #50
-ro.sys.fw.empty_app_percent=40
+#ro.sys.fw.empty_app_percent=40
 # % of empty apps at which we don't trim. #100
 #ro.sys.fw.trim_empty_percent=70
 # % of cached apps at which we don't trim. #100
