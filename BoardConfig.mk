@@ -2,7 +2,7 @@
 -include vendor/lge/p880/BoardConfigVendor.mk
 
 #Build variant; user,userdebug,eng
-TARGET_BUILD_VARIANT := userdebug
+TARGET_BUILD_VARIANT := user
 
 #GCC
 TARGET_GCC_VERSION_EXP := 4.9-sm
