@@ -56,7 +56,7 @@ on fs
     
     # Zram
     swapon_all fstab.x3
-#    write /proc/sys/vm/swappiness 50
+    write /proc/sys/vm/swappiness 70
 
     setprop ro.crypto.fuse_sdcard true
 
