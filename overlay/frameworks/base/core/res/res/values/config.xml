@@ -128,7 +128,7 @@
     <integer translatable="false" name="config_wifi_driver_stop_delay">80000</integer>
 
     <!-- Wifi driver supports batched scan -->
-    <bool translatable="false" name="config_wifi_batched_scan_supported">true</bool>
+    <bool translatable="false" name="config_wifi_batched_scan_supported">false</bool>
 
     <bool name="config_disableMenuKeyInLockScreen">true</bool>
 
@@ -153,7 +153,7 @@
     * The remote submix module "audio.r_submix.default" must be installed on the device.
     * The device must be provisioned with HDCP keys (for protected content).
     -->
-    <bool name="config_enableWifiDisplay">true</bool>
+    <bool name="config_enableWifiDisplay">false</bool>
 
     <!-- Indicate whether the SD card is accessible without removing the battery. -->
     <bool name="config_batterySdCardAccessibility">true</bool>

@@ -32,8 +32,6 @@ wlan.chip.vendor=brcm
 wlan.chip.version=bcm4330x
 wifi.supplicant_scan_interval=200
 ro.wifi.channels=14
-#Disable HDCP in WifiDisplay
-persist.sys.wfd.nohdcp=1
 
 #Pre KitKat
 ro.bq.gpu_to_cpu_unsupported=1

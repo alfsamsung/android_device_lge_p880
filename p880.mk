@@ -115,11 +115,9 @@ PRODUCT_PACKAGES += \
 
 PRODUCT_PACKAGES += \
     audio.a2dp.default \
-    audio.r_submix.default \
     lights.x3 \
     com.android.future.usb.accessory \
     libaudioutils
-#    audio.usb.default \
 
 # Charger mode
 PRODUCT_PACKAGES += \
