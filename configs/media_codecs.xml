@@ -111,31 +111,10 @@ Only the three quirks included above are recognized at this point:
             <Feature name="adaptive-playback" />
             <Feature name="secure-playback" required="true" />
         </MediaCodec>
-        <!--MediaCodec name="OMX.Nvidia.mpeg2v.decode" type="video/mpeg2" />
-        <MediaCodec name="OMX.Nvidia.mp3.decoder" type="audio/mpeg" />
-        <MediaCodec name="OMX.Nvidia.mp3.decoder" type="audio/mpeg-L2" />
-        <MediaCodec name="OMX.Nvidia.eaacp.decoder" type="audio/mp4a-latm" /-->
         <MediaCodec name="OMX.Nvidia.wma.decoder" type="audio/x-ms-wma" />
         <MediaCodec name="OMX.Nvidia.vc1.decode" type="video/x-ms-wmv" />
         <MediaCodec name="OMX.Nvidia.mjpeg.decoder" type="video/mjpeg" />
         <MediaCodec name="OMX.Nvidia.h264.decode.secure" type="video/avc" />
-        <!--MediaCodec name="OMX.Nvidia.bypass.decoder" type="audio/ac3" /-->
-        <!--MediaCodec name="OMX.Nvidia.bypass.decoder" type="audio/dts" /-->
-
-        <MediaCodec name="OMX.google.mp3.decoder" type="audio/mpeg" />
-        <MediaCodec name="OMX.google.amrnb.decoder" type="audio/3gpp" />
-        <MediaCodec name="OMX.google.amrwb.decoder" type="audio/amr-wb" />
-        <MediaCodec name="OMX.google.aac.decoder" type="audio/mp4a-latm" />
-        <MediaCodec name="OMX.google.g711.alaw.decoder" type="audio/g711-alaw" />
-        <MediaCodec name="OMX.google.g711.mlaw.decoder" type="audio/g711-mlaw" />
-        <MediaCodec name="OMX.google.vorbis.decoder" type="audio/vorbis" />
-        <MediaCodec name="OMX.google.gsm.decoder" type="audio/gsm" />
-
-        <MediaCodec name="OMX.google.mpeg4.decoder" type="video/mp4v-es" />
-        <MediaCodec name="OMX.google.h263.decoder" type="video/3gpp" />
-        <MediaCodec name="OMX.google.h264.decoder" type="video/avc" />
-        <MediaCodec name="OMX.google.vp8.decoder" type="video/x-vnd.on2.vp8" />
-        <MediaCodec name="OMX.google.vp9.decoder" type="video/x-vnd.on2.vp9" />
 
         <MediaCodec name="DDPDecoder" type="audio/eac3" />
         <MediaCodec name="DDPDecoder" type="audio/ac3" />
