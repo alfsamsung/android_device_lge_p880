@@ -158,7 +158,7 @@
                card_id="1"
                card_name="tegramax98088"
                device_id="2">
-    <pcm_config rate="8000"
+    <pcm_config rate="11025"
                 channels="1"
                 bps="16"
                 period_size="256"
@@ -317,7 +317,7 @@
            card_id="1"
            card_name="tegramax98088"
            device_id="4">
-    <pcm_config rate="8000"
+    <pcm_config rate="11025"
             channels="1"
             bps="16"
             period_size="256"
