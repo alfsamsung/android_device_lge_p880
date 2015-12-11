@@ -14,7 +14,9 @@ PRODUCT_AAPT_PREBUILT_DPI := hdpi
 PRODUCT_PROPERTY_OVERRIDES += \
     ro.ril.hsxpa=2 \
     ro.ril.gprsclass=10 \
-    dalvik.vm.stack-trace-file=""
+    dalvik.vm.stack-trace-file="" \
+    dalvik.vm.dex2oat-flags=--no-watch-dog \
+    dalvik.vm.dex2oat-swap=false \
 
 PRODUCT_BUILD_PROP_OVERRIDES += BUILD_UTC_DATE=0
 
@@ -94,10 +96,10 @@ PRODUCT_COPY_FILES += \
 # Filesystem management tools
 PRODUCT_PACKAGES += \
     e2fsck \
-    setup_fs
+    make_ext4fs
 
 #wifi
-PRODUCT_PACKAGES := \
+PRODUCT_PACKAGES += \
     libwpa_client \
     hostapd \
     dhcpcd.conf \

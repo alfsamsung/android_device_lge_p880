@@ -55,6 +55,9 @@ debug.hwui.render_dirty_regions=false
 dalvik.vm.jit.codecachesize=0
 dalvik.vm.dexopt-flags=m=y
 
+#Disable atlas service
+config.disable_atlas=true
+
 #drm TEST
 drm.service.enabled=true
 persist.sys.media.legacy-drm=true
