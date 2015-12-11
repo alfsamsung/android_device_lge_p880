@@ -9,6 +9,7 @@ import android.os.Message;
 import android.os.Parcel;
 import android.os.SystemService;
 
+import android.provider.Settings;
 import android.telephony.PhoneNumberUtils;
 
 public class X3RIL extends RIL implements CommandsInterface {
@@ -106,6 +107,7 @@ public class X3RIL extends RIL implements CommandsInterface {
         //Send command 0 when radio state is on
         if (!sentHwBootstrap) {
             lgeSendCommand(1);
+            sentHwBootstrap = true;
         }
         lgeSendCommand(0);
         
@@ -128,6 +130,13 @@ public class X3RIL extends RIL implements CommandsInterface {
     static final int RIL_UNSOL_LGE_FACTORY_READY = 1080;
 
     private void restartRild() {
+        int airplaneMode = Settings.Global.getInt(mContext.getContentResolver(),
+                Settings.Global.AIRPLANE_MODE_ON, 0);
+        if (airplaneMode > 0) {
+            if (RILJ_LOGD)
+                riljLog("X3RIL: Ignoring LGE_RESTART_RILD in airplane mode");
+            return;
+        }
         if (RILJ_LOGD) {
             riljLog("X3RIL: restartRild started");
         }
@@ -179,8 +188,6 @@ public class X3RIL extends RIL implements CommandsInterface {
                 super.processUnsolicited(p);
                 if (RadioState.RADIO_ON == newState) {
                     setNetworkSelectionModeAutomatic(null);
-                } else if (RadioState.RADIO_OFF == newState) {
-                    sentHwBootstrap = false;
                 }
                 return;
             case RIL_UNSOL_LGE_FACTORY_READY:
@@ -221,17 +228,79 @@ public class X3RIL extends RIL implements CommandsInterface {
 // Stuff we ignore
     @Override
     public void getNeighboringCids(Message response) {
-        AsyncResult.forMessage(response).exception =
-            new CommandException(CommandException.Error.REQUEST_NOT_SUPPORTED);
-        response.sendToTarget();
-        response = null;
+       riljLog("Ignoring call to 'getNeighboringCids'");
+        if (response != null) {
+            CommandException ex = new CommandException(
+                CommandException.Error.REQUEST_NOT_SUPPORTED);
+            AsyncResult.forMessage(response, null, ex);
+            response.sendToTarget();
+        }
     }
 
     @Override
     public void getImsRegistrationState(Message result) {
-        AsyncResult.forMessage(result).exception =
-            new CommandException(CommandException.Error.REQUEST_NOT_SUPPORTED);
-        result.sendToTarget();
-        result = null;
+        riljLog("Ignoring call to 'getImsRegistrationState'");
+        if (result != null) {
+            CommandException ex = new CommandException(
+                CommandException.Error.REQUEST_NOT_SUPPORTED);
+            AsyncResult.forMessage(result, null, ex);
+            result.sendToTarget();
+        }
+    }
+
+    @Override
+    public void getHardwareConfig (Message result) {
+        riljLog("Ignoring call to 'getHardwareConfig'");
+        if (result != null) {
+            CommandException ex = new CommandException(
+                CommandException.Error.REQUEST_NOT_SUPPORTED);
+            AsyncResult.forMessage(result, null, ex);
+            result.sendToTarget();
+        }
+    }
+
+    @Override
+    public void setDataAllowed(boolean allowed, Message result) {
+        riljLog("Ignoring call to 'setDataAllowed'");
+        if (result != null) {
+            CommandException ex = new CommandException(
+                CommandException.Error.REQUEST_NOT_SUPPORTED);
+            AsyncResult.forMessage(result, null, ex);
+            result.sendToTarget();
+        }
+    }
+
+    @Override
+    public void setCellInfoListRate(int rateInMillis, Message response) {
+        riljLog("Ignoring call to 'setCellInfoListRate'");
+        if (response != null) {
+            CommandException ex = new CommandException(
+                CommandException.Error.REQUEST_NOT_SUPPORTED);
+            AsyncResult.forMessage(response, null, ex);
+            response.sendToTarget();
+        }
+    }
+
+    @Override
+    public void requestIccSimAuthentication(int authContext, String data, String aid,
+                                            Message response) {
+        riljLog("Ignoring call to 'requestIccSimAuthentication'");
+        if (response != null) {
+            CommandException ex = new CommandException(
+                CommandException.Error.REQUEST_NOT_SUPPORTED);
+            AsyncResult.forMessage(response, null, ex);
+            response.sendToTarget();
+        }
+    }
+
+    @Override
+    public void requestIsimAuthentication(String nonce, Message response) {
+        riljLog("Ignoring call to 'requestIsimAuthentication'");
+        if (response != null) {
+            CommandException ex = new CommandException(
+                CommandException.Error.REQUEST_NOT_SUPPORTED);
+            AsyncResult.forMessage(response, null, ex);
+            response.sendToTarget();
+        }
     }
 }
