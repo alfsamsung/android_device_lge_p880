@@ -118,6 +118,7 @@ PRODUCT_PACKAGES += \
 PRODUCT_PACKAGES += \
     audio.a2dp.default \
     lights.x3 \
+    libstagefrighthw \
     com.android.future.usb.accessory \
     libaudioutils
 

@@ -47,7 +47,6 @@ lib/lge-ril.so
 lib/libini.so
 lib/libril.so
 lib/libnvomx.so
-lib/libstagefrighthw.so
 lib/libnvodm_imager.so
 lib/libnvodm_query.so
 lib/libnvmm_contentpipe.so
