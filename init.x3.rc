@@ -9,6 +9,9 @@ on early-init
     mkdir /mpt 0775 system system
 
 on init
+    # Preload the misc old symbols
+    export LD_PRELOAD /system/lib/libx3_misc.so
+
     # Put all cpu cores online
     chmod 0664 /sys/kernel/debug/tegra_hotplug/min_cpus
     chmod 0664 /sys/kernel/debug/tegra_hotplug/max_cpus

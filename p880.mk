@@ -115,6 +115,10 @@ PRODUCT_PACKAGES += \
     Tag \
     com.android.nfc_extras
 
+# Preload help lib for missing symbols
+PRODUCT_PACKAGES += \
+    libx3_misc
+
 PRODUCT_PACKAGES += \
     audio.a2dp.default \
     lights.x3 \
