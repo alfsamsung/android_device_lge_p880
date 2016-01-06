@@ -9,13 +9,6 @@ rild.libpath=/system/lib/lge-ril.so
 rild.libargs=-d /dev/ttyACM0
 ro.telephony.ril_class=X3RIL
 
-#lge-ril.so
-#persist.radio.rr.enable=1
-#From stock prop:300000. Default RIL timeout=60000
-#ro.ril.wake_lock_timeout=80000
-#? ril.timeout.atcommand 0
-#? ril.timeout.javaril 0
-
 # enable insecure AGPS
 ro.ril.def.agps.mode=2
 
@@ -35,7 +28,6 @@ ro.wifi.channels=14
 
 #Pre KitKat
 ro.bq.gpu_to_cpu_unsupported=1
-debug.camcorder.disablemeta=1
 
 # don't preload OpenGL in Zygote, the Tegra drivers do not like it
 ro.zygote.disable_gl_preload=true
@@ -44,8 +36,6 @@ ro.zygote.disable_gl_preload=true
 ro.bt.bdaddr_path=/sys/devices/platform/bd_address/bdaddr_if
 ro.opengles.version=131072
 persist.sys.usb.config=mtp,adb
-#debug.choreographer.vsync=true
-#debug.choreographer.frametime=true
 debug.choreographer.skipwarning=99
 
 # lollipop hwui, disable dirty regions invalidation
@@ -79,3 +69,9 @@ ro.sys.fw.bservice_enable=true
 
 #Audioflinger memory alloc multiplier #2, min=1 max=2
 af.fast_track_multiplier=1
+
+#Disable audio offloading
+audio.offload.disable=1
+
+#Init log level #org=3
+#sys.init_log_level=7
