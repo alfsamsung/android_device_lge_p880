@@ -2,6 +2,8 @@
 type lgsecclk, domain;
 type lgsecclk_exec, exec_type, file_type;
 init_daemon_domain(lgsecclk)
+typeattribute lgsecclk mlstrustedsubject;
+
 allow lgsecclk system_server_service:service_manager add;
 allow lgsecclk self:process execmem;
 allow lgsecclk calibration_data_file:dir { read search open };
@@ -12,13 +14,21 @@ allow servicemanager lgsecclk:file { read write open };
 allow servicemanager lgsecclk:process getattr; 
 
 # lgdrm
-type lgdrmserver, domain;
-type lgdrmserver_exec, exec_type, file_type;
-init_daemon_domain(lgdrmserver)
-allow lgdrmserver self:process execmem;
+allow drmserver self:process execmem;
+allow drmserver drm_data_file:file rw_file_perms;
+allow drmserver drm_data_file:file lock;
+allow drmserver drm_data_file:dir rw_file_perms;
+allow drmserver radio_device:blk_file r_file_perms;
 
 # nvcpud
-type nvcpud, domain;
-type nvcpud_exec, exec_type, file_type;
-init_daemon_domain(nvcpud)
-allow nvcpud self:process execmem;
+type NvCpuService, domain;
+type NvCpuService_exec, exec_type, file_type;
+init_daemon_domain(NvCpuService)
+typeattribute NvCpuService mlstrustedsubject;
+
+allow NvCpuService system_server_service:service_manager add;
+allow NvCpuService self:process execmem;
+allow NvCpuService sysfs_devices_system_cpu:chr_file rw_file_perms;
+allow servicemanager NvCpuService:dir { read search open };
+allow servicemanager NvCpuService:file { read write open };
+allow servicemanager NvCpuService:process getattr; 
