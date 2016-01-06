@@ -11,4 +11,4 @@
 /dev/block/platform/sdhci-tegra.2/by-num/p1 /external_sd auto defaults recoveryonly
 
 # Zram 15%
-/dev/block/zram0  none  swap  defaults  zramsize=155136000
+/dev/block/zram0  none  swap  defaults  zramsize=155136000,notrim
