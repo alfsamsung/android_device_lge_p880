@@ -10,5 +10,5 @@
 /devices/platform/sdhci-tegra.2/mmc_host/mmc2* auto auto defaults voldmanaged=sdcard1:auto,noemulatedsd
 /dev/block/platform/sdhci-tegra.2/by-num/p1 /external_sd auto defaults recoveryonly
 
-# Zram 15%
-/dev/block/zram0  none  swap  defaults  zramsize=155136000,notrim
+# Zram 20%
+/dev/block/zram0  none  swap  defaults  zramsize=204800000,notrim
