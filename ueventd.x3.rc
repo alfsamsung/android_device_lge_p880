@@ -60,7 +60,3 @@
 /dev/ttyHS1    0660    system  system
 # NFC
 /dev/pn544     0660    nfc     nfc
-#NvCpuService
-/dev/cpu_freq_min	0640	root	root
-/dev/cpu_freq_max	0640	root	root
-

@@ -12,6 +12,7 @@ allow lgsecclk unlabeled:file { read write getattr open };
 allow servicemanager lgsecclk:dir { read search open };
 allow servicemanager lgsecclk:file { read write open };
 allow servicemanager lgsecclk:process getattr; 
+binder_call(lgsecclk, servicemanager)
 
 # lgdrm
 allow drmserver self:process execmem;
@@ -19,6 +20,7 @@ allow drmserver drm_data_file:file rw_file_perms;
 allow drmserver drm_data_file:file lock;
 allow drmserver drm_data_file:dir rw_file_perms;
 allow drmserver radio_device:blk_file r_file_perms;
+binder_call(drmserver, lgsecclk)
 
 # nvcpud
 type NvCpuService, domain;
@@ -32,3 +34,4 @@ allow NvCpuService sysfs_devices_system_cpu:chr_file rw_file_perms;
 allow servicemanager NvCpuService:dir { read search open };
 allow servicemanager NvCpuService:file { read write open };
 allow servicemanager NvCpuService:process getattr; 
+binder_call(NvCpuService, servicemanager)
