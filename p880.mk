@@ -118,12 +118,17 @@ PRODUCT_PACKAGES += \
 PRODUCT_PACKAGES += \
     libx3_misc
 
+# P880 device libs
+PRODUCT_PACKAGES += \
+    lights.x3 \
+    libstagefrighthw
+
+#Audio and misc
 PRODUCT_PACKAGES += \
     audio.a2dp.default \
-    lights.x3 \
-    libstagefrighthw \
     com.android.future.usb.accessory \
-    libaudioutils
+    libaudioutils \
+    OmniSwitch
 
 # Charger mode
 PRODUCT_PACKAGES += \

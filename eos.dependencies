@@ -1,0 +1,8 @@
+[
+  {
+    "remote": "github",
+    "repository": "omnirom/android_packages_apps_OmniSwitch",
+    "target_path": "packages/apps/OmniSwitch",
+    "revision": "android-5.1"
+  }
+]
