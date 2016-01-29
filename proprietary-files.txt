@@ -10,9 +10,6 @@ lib/hw/audio_policy.tegra.so
 lib/hw/audio.primary.tegra.so
 lib/hw/gralloc.tegra.so
 lib/hw/hwcomposer.tegra.so
-lib/egl/libEGL_tegra.so
-lib/egl/libGLESv1_CM_tegra.so
-lib/egl/libGLESv2_tegra.so
 lib/libardrv_dynamic.so
 lib/libasound.so
 lib/libcgdrv.so
@@ -39,7 +36,6 @@ lib/libnvmm.so
 lib/libnvmm_utils.so
 lib/libnvomxadaptor.so
 lib/libnvomxilclient.so
-lib/libnvos.so
 lib/libnvrm_graphics.so
 lib/libnvrm.so
 lib/libnvwsi.so
@@ -69,7 +65,6 @@ etc/firmware/nvavp_vid_ucode_alt.bin
 etc/firmware/nvavp_vid_ucode.bin
 etc/firmware/bcm4330.hcd
 vendor/firmware/libpn544_fw.so
-lib/egl/libEGL_tegra_impl.so
 lib/egl/libGLESv2_tegra_impl.so
 lib/egl/libGLESv1_CM_tegra_impl.so
 lib/libnvglsi.so

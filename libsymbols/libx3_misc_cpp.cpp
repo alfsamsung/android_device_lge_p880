@@ -14,6 +14,9 @@
  * limitations under the License.
  */
 
+#include <media/stagefright/MediaBuffer.h>
+#include <media/stagefright/MediaBufferGroup.h>
+
 #include <system/window.h>
 #include <ui/PixelFormat.h>
 #include <ui/Rect.h>
@@ -23,23 +26,30 @@ namespace android {
 extern "C" {
 // ---------------------------------------------------------------------------
 
-     /* status_t SurfaceControl::setPosition */
+    /* status_t SurfaceControl::setLayer */
+    //Needed by libnvwinsys.so //libgui
+    status_t _ZN7android14SurfaceControl8setLayerEj( uint32_t layer);
+    status_t _ZN7android14SurfaceControl8setLayerEi( int32_t layer) {
+        return _ZN7android14SurfaceControl8setLayerEj( (uint32_t)layer);
+    }
+
+    /* status_t SurfaceControl::setPosition */
     //Needed by libnvwinsys.so //libgui
     status_t _ZN7android14SurfaceControl11setPositionEff(float x, float y);
     status_t _ZN7android14SurfaceControl11setPositionEii(int32_t x, int32_t y) {
-               return _ZN7android14SurfaceControl11setPositionEff((float)x, (float)y);
-        }
+        return _ZN7android14SurfaceControl11setPositionEff((float)x, (float)y);
+    }
 // ---------------------------------------------------------------------------
 
     //Needed by liblgdrm.so and libnvcpud.so getCallingUid() const //libbinder
     //Note Lollipo uses int and MM uses pid_t and  uid_t
-    int _ZNK7android14IPCThreadState13getCallingUidEv();
+    pid_t _ZNK7android14IPCThreadState13getCallingUidEv();
     int _ZN7android14IPCThreadState13getCallingUidEv() {
         return _ZNK7android14IPCThreadState13getCallingUidEv();
     }
 
     //Needed by libnvcpud.so: getCallingPid() //libbinder
-    int _ZNK7android14IPCThreadState13getCallingPidEv();
+    uid_t _ZNK7android14IPCThreadState13getCallingPidEv();
     int _ZN7android14IPCThreadState13getCallingPidEv() {
         return _ZNK7android14IPCThreadState13getCallingPidEv();
     }
@@ -50,6 +60,22 @@ extern "C" {
     void _ZN7android12MemoryDealerC2EjPKcj(void* obj, size_t size, const char* name, uint32_t flags);
     void _ZN7android12MemoryDealerC1EjPKc(void* obj, size_t size, const char* name) {
         _ZN7android12MemoryDealerC2EjPKcj(obj, size, name, 0);
+    }
+// ---------------------------------------------------------------------------
+
+    //Needed by libwvm.so
+    //LEGACY_ACQUIRE_BUFFER_SYMBOL //libstagefright
+    status_t _ZN7android16MediaBufferGroup14acquire_bufferEPPNS_11MediaBufferE(
+        MediaBufferGroup* group, MediaBuffer **out) {
+            return group->acquire_buffer(out, false);
+    }
+// ---------------------------------------------------------------------------
+
+    //Needed by libnvcap.so //libbinder
+    // Backwards compatibility for libdatabase_sqlcipher (http://b/8253769).
+    void _ZN7android10MemoryBaseC1ERKNS_2spINS_11IMemoryHeapEEEij(void*, void*, ssize_t, size_t);
+    void _ZN7android10MemoryBaseC1ERKNS_2spINS_11IMemoryHeapEEElj(void* obj, void* h, long o, unsigned int size) {
+        _ZN7android10MemoryBaseC1ERKNS_2spINS_11IMemoryHeapEEEij(obj, h, o, size);
     }
 // ---------------------------------------------------------------------------
 

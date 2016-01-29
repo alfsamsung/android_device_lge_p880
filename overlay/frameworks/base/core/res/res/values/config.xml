@@ -81,6 +81,12 @@
         <item>"7,1"</item>
     </string-array>
 
+    <!-- The RadioAccessFamilies supported by the device.
+         Empty is viewed as "all".  Only used on devices which
+         don't support RIL_REQUEST_GET_RADIO_CAPABILITY
+         format is UMTS|LTE|... -->
+    <string translatable="false" name="config_radio_access_family">GSM|WCDMA|UMTS</string>
+
     <!-- Configure mobile tcp buffer sizes in the form:
          rat-name:rmem_min,rmem_def,rmem_max,wmem_min,wmem_def,wmem_max
          If no value is found for the rat-name in use, the system default will be applied.
@@ -105,10 +111,19 @@
         <item>SUPL_MODE=1</item>
     </string-array>
 
+    <string-array translatable="false" name="config_globalActionsList">
+        <item>power</item>
+        <item>reboot</item>
+        <item>airplane</item>
+        <item>users</item>
+        <item>silent</item>
+    </string-array>
+
     <!-- Is the notification LED intrusive? Used to decide if there should be a disable option -->
     <bool name="config_intrusiveNotificationLed">true</bool>
 
-    <!-- Does the notification LED support multiple colors? Used to decide if the used can change the colors -->
+    <!-- Does the notification LED support multiple colors?
+         Used to decide if the user can change the colors -->
     <bool name="config_multiColorNotificationLed">false</bool>
 
     <!-- Do the battery/notification LEDs support pulsing?
@@ -130,6 +145,9 @@
     <!-- Wifi driver stop delay, in milliseconds.
          Default value is 2 minutes. -->
     <integer translatable="false" name="config_wifi_driver_stop_delay">80000</integer>
+    
+    <!-- Integer indicating wpa_supplicant scan interval in milliseconds. Default=15000-->
+    <integer translatable="false" name="config_wifi_supplicant_scan_interval">180000</integer>
 
     <!-- Wifi driver supports batched scan -->
     <bool translatable="false" name="config_wifi_batched_scan_supported">true</bool>
@@ -172,6 +190,13 @@
     <!--SIM does not save, but the voice mail number to be changed. -->
     <bool name="editable_voicemailnumber">true</bool>
 
+    <!-- Flag indicating device support for EAP SIM, AKA, AKA' -->
+    <bool name="config_eap_sim_based_auth_supported">false</bool>
+
+    <!-- Boolean indicating if restoring network selection should be skipped -->
+    <!-- The restoring is handled by modem if it is true -->
+    <bool translatable="false" name="skip_restoring_network_selection">true</bool>
+
     <!-- Whether to enable Hardware FLP overlay which allows Hardware FLP to be
          replaced by an app at run-time. When disabled, only the
          config_hardwareFlpPackageName package will be searched for Hardware Flp,
@@ -198,14 +223,23 @@
          allows more memory to be used by processes but may cause more allocations to block
          waiting on disk I/O or lowmemorykiller.  Directly added to the default value chosen by
          ActivityManager based on screen size. -->
-    <integer name="config_extraFreeKbytesAdjust">-1000</integer>
+    <integer name="config_extraFreeKbytesAdjust">-500</integer>
 
     <!-- Minimum screen brightness allowed by the power manager. -->
-    <integer name="config_screenBrightnessDim">1</integer>
+    <integer name="config_screenBrightnessDim">3</integer>
 
     <!-- Minimum screen brightness setting allowed by the power manager.
          The user is forbidden from setting the brightness below this level. -->
-    <integer name="config_screenBrightnessSettingMinimum">1</integer>
+    <integer name="config_screenBrightnessSettingMinimum">3</integer>
+
+    <!-- Minimum allowable screen brightness to use in a very dark room.
+         This value sets the floor for the darkest possible auto-brightness
+         adjustment.  It is expected to be somewhat less than the first entry in
+         config_autoBrightnessLcdBacklightValues so as to allow the user to have
+         some range of adjustment to dim the screen further than usual in very
+         dark rooms. The contents of the screen must still be clearly visible
+         in darkness (although they may not be visible in a bright room). -->
+    <integer name="config_screenBrightnessDark">1</integer>
 
     <!-- Array of light sensor LUX values to define our levels for auto backlight brightness support.
          The N entries of this array define N  1 zones as follows:
@@ -218,8 +252,8 @@
 
          Must be overridden in platform specific overlays -->
     <integer-array name="config_autoBrightnessLevels">
-        <item>2</item>
-        <item>5</item>
+        <item>3</item>
+        <item>8</item>
         <item>20</item>
         <item>50</item>
         <item>100</item>
@@ -238,9 +272,9 @@
          than the size of the config_autoBrightnessLevels array.
          This must be overridden in platform specific overlays -->
     <integer-array name="config_autoBrightnessLcdBacklightValues">
-        <item>5</item>    <!-- 0-2 -->
-        <item>25</item> <!-- 2-5 -->
-        <item>32</item> <!-- 5-20 -->
+        <item>5</item>    <!-- 0-3 -->
+        <item>25</item> <!-- 3-8 -->
+        <item>32</item> <!-- 8-20 -->
         <item>41</item> <!-- 20-50 -->
         <item>52</item> <!-- 50-100 -->
         <item>62</item> <!-- 100-200 -->
@@ -344,11 +378,15 @@
         <item>/dev/bus/usb/001</item>
     </string-array>
 
-    <!-- Performance profiles -->
-    <string name="config_perf_profile_prop">sys.perf.profile</string>
-    <string name="config_perf_profile_default_entry">1</string>
+    <!-- Set this to true to enable the platform's auto-power-save modes like doze and
+         app standby.  These are not enabled by default because they require a standard
+         cloud-to-device messaging service for apps to interact correctly with the modes
+         (such as to be able to deliver an instant message to the device even when it is
+         dozing).  This should be enabled if you have such services and expect apps to
+         correctly use them when installed on your device.  Otherwise, keep this disabled
+         so that applications can still use their own mechanisms. -->
+    <bool name="config_enableAutoPowerModes">true</bool>
 
-<!--TEST--> 
     <!-- Ambient Display:Dream of notifications -->
     <string name="config_dozeComponent">com.android.systemui/com.android.systemui.doze.DozeService</string>
     <bool name="config_dozeAfterScreenOff">true</bool>
@@ -358,7 +396,6 @@
      <!-- Screen brightness when dozing -->
     <integer name="config_screenBrightnessDoze">6</integer>
 
-    <!-- Wether doze feature is enabled by default in settings. -->
-    <bool name="config_doze_enabled_by_default">false</bool>
-<!--TEST END--> 
+    <!-- Wether doze feature is enabled by default in settings. 
+    <bool name="config_doze_enabled_by_default">false</bool>-->
 </resources>

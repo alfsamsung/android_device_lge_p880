@@ -1,8 +1,12 @@
 allow system_server { knv_device }:chr_file rw_file_perms;
 
 # Access .gps.interface.pipe.to_gpsd.
-allow system_server gps_data_file:dir search;
-allow system_server gps_data_file:fifo_file { setattr rw_file_perms };
+allow system_server gps_data_file:dir rw_dir_perms;
+allow system_server gps_data_file:file rw_file_perms;
+allow system_server gps_data_file:fifo_file { setattr rw_file_perms create };
+
+# Access /data/sensors/gps* socket
+allow system_server gps_data_file:sock_file create_file_perms;
 
 # Access /data/sensors.
 allow system_server sensors_data_file:dir r_dir_perms;
@@ -11,20 +15,16 @@ allow system_server sensors_data_file:file r_file_perms;
 allow system_server calibration_data_file:dir rw_dir_perms;
 allow system_server calibration_data_file:file rw_file_perms;
 
-# Access /data/sensors/gps* socket
-allow system_server gps_data_file:sock_file create_file_perms;
-allow system_server gps_data_file:dir rw_dir_perms;
-allow system_server gps_data_file:file rw_file_perms;
-
 allow system_server fuse:dir search;
 
-allow system_server nvhost_writable_device:dir rw_dir_perms;
-allow system_server nvhost_writable_device:file rw_file_perms;
-allow system_server nvhost_writable_device:chr_file { read write ioctl open };
+allow system_server gpu_device:dir rw_dir_perms;
+allow system_server gpu_device:file rw_file_perms;
 
 allow system_server sysfs_devices_tegradc:dir search;
 allow system_server sysfs_devices_tegradc:file { read write getattr open };
 allow system_server sysfs_devices_tegradc:lnk_file read;
 allow system_server sysfs_hardware:file rw_file_perms;
+allow system_server sysfs_firmware_writable:file rw_file_perms;
 
-allow system_server sysfs_firmware_writable:file { read write open };
+#text relocs
+allow system_server system_file:file execmod;

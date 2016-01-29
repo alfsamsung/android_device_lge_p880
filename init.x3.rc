@@ -10,7 +10,10 @@ on early-init
 
 on init
     # Preload the misc old symbols
-    export LD_PRELOAD /system/lib/libx3_misc_cpp.so
+    export LD_PRELOAD /system/lib/libboringssl-compat.so:/system/lib/libx3_ril.so:/system/lib/libx3_misc_cpp.so:/system/lib/libx3_cam.so
+    #TODO LD_SHIM_LIBS needs bionic patch
+    # export LD_SHIM_LIBS /system/bin/rild|libx3_ril.so:/system/lib/libril.so|libx3_ril.so
+
 
     # Put all cpu cores online
     chmod 0664 /sys/kernel/debug/tegra_hotplug/min_cpus
@@ -19,25 +22,9 @@ on init
     chown system system /sys/kernel/debug/tegra_hotplug/max_cpus
     write /sys/kernel/debug/tegra_hotplug/min_cpus 4
 
-    # Storage
-    mkdir /mnt/media_rw/sdcard1 0700 media_rw media_rw
-    mkdir /storage/sdcard1 0700 root root
-
-    # See storage config details at http://source.android.com/tech/storage/
-    chmod 0701 /mnt/media_rw
-    mkdir /mnt/shell/emulated 0700 shell shell
-    mkdir /storage/emulated 0555 root root
-
-    export EXTERNAL_STORAGE /storage/emulated/legacy
-    export EMULATED_STORAGE_SOURCE /mnt/shell/emulated
-    export EMULATED_STORAGE_TARGET /storage/emulated
-    export SECONDARY_STORAGE /storage/sdcard1
-
     # Support legacy paths
-    symlink /storage/emulated/legacy /sdcard
-    symlink /storage/emulated/legacy /mnt/sdcard
-    symlink /storage/emulated/legacy /storage/sdcard0
-    symlink /mnt/shell/emulated/0 /storage/emulated/legacy
+    symlink /sdcard /mnt/sdcard
+    symlink /sdcard /storage/sdcard0
 
 on fs
     mount_all ./fstab.x3
@@ -60,15 +47,6 @@ on fs
     # Zram
     swapon_all fstab.x3
     write /proc/sys/vm/swappiness 70
-
-    setprop ro.crypto.fuse_sdcard true
-
-service sdcard /system/bin/sdcard -u 1023 -g 1023 -t 4 -l /data/media /mnt/shell/emulated
-    class late_start
-
-service fuse_sdcard1 /system/bin/sdcard -u 1023 -g 1023 -d /mnt/media_rw/sdcard1 /storage/sdcard1
-    class late_start
-    disabled
 
 on post-fs-data
     # create directory for lgdrm
@@ -99,9 +77,6 @@ on boot
     mkdir /data/misc/bluetooth 0770 bluetooth bluetooth
     # --- BRCM
     mkdir /data/nvcam 0700 media camera
-    # we will remap this as /mnt/sdcard with the sdcard fuse tool
-    mkdir /data/media 0775 media_rw media_rw
-    chown media_rw media_rw /data/media
 
     chmod 0777 /dev/block/platform/sdhci-tegra.3/by-name/NVA
     chown system sdcard_rw /dev/block/platform/sdhci-tegra.3/by-name/NVA
@@ -243,8 +218,8 @@ on boot
     # KSM
     chown root system /sys/kernel/mm/ksm/run
     chmod 0664 /sys/kernel/mm/ksm/run
-    write /sys/kernel/mm/ksm/pages_to_scan 50
-    write /sys/kernel/mm/ksm/sleep_millisecs 600
+    write /sys/kernel/mm/ksm/pages_to_scan 100
+    write /sys/kernel/mm/ksm/sleep_millisecs 2000
 
     # GPS init
     chown system system /sys/devices/platform/gps_gpio/poweron
@@ -280,16 +255,19 @@ service nvcpud /system/bin/nvcpud
     class main
     user root
     group root
+    oneshot
 
 service lgsecclk /system/bin/lgsecclkserver
     class main
     user system
     group system sdcard_rw media_rw
+    oneshot
 
 service lgdrm /system/bin/lgdrmserver
     class main
     user system
     group sdcard_rw media_rw system radio media drm drmrpc
+    oneshot
 
 service tf_daemon /system/bin/tf_daemon -storageDir /cal/widevine -d
     class main
@@ -403,10 +381,10 @@ on property:init.svc.bootanim=stopped
     write /sys/devices/system/cpu/cpufreq/interactive/io_is_busy 1
     write /sys/devices/system/cpu/cpufreq/interactive/boost_factor 2
     write /sys/devices/system/cpu/cpufreq/interactive/sustain_load 85
-    write /sys/devices/system/cpu/cpufreq/interactive/go_maxspeed_load 97
+    write /sys/devices/system/cpu/cpufreq/interactive/go_maxspeed_load 98
     write /sys/devices/system/cpu/cpufreq/interactive/dynamic_freq_mode 1
-    write /sys/devices/system/cpu/cpufreq/interactive/min_sample_time 50000
-    write /sys/devices/system/cpu/cpufreq/interactive/timer_rate 30000
+    write /sys/devices/system/cpu/cpufreq/interactive/min_sample_time 30000
+    write /sys/devices/system/cpu/cpufreq/interactive/timer_rate 40000
 
 on property:dev.bootcomplete=1
     write /sys/devices/platform/tegra-i2c.0/i2c-0/0-0039/run_calibration 1
@@ -416,31 +394,11 @@ on property:dev.bootcomplete=1
     write /sys/kernel/debug/tegra_hotplug/min_cpus 0
 
 # Performance Profiles
-    # Powersave
-on property:sys.perf.profile=0
-    ## Cpu multicore power saving. 0-2, 0=default and no saving
-    write /sys/devices/system/cpu/sched_mc_power_savings 2
     ## 0-3, 0=default and lowest threads, 3=running threads disabled.
-    write /sys/devices/system/cpu/cpuquiet/balanced/core_bias 2
-    ## 75=default. Cpu usage in %
-    write /sys/devices/system/cpu/cpuquiet/balanced/balance_level 85
-    ## 1000=default Time delay before turning off cpu. Value in msec 
-    write /sys/devices/system/cpu/cpuquiet/balanced/down_delay 400
-    ## Backlight hvled 0=maks
-    write /sys/devices/platform/tegra-i2c.1/i2c-1/1-0036/lm3533_bl_hvled 2
-
-    # Balanced
-on property:sys.perf.profile=1
-    write /sys/devices/system/cpu/sched_mc_power_savings 1
     write /sys/devices/system/cpu/cpuquiet/balanced/core_bias 1
+    ## 75=default. Cpu usage in %
     write /sys/devices/system/cpu/cpuquiet/balanced/balance_level 80
-    write /sys/devices/system/cpu/cpuquiet/balanced/down_delay 1000
-    write /sys/devices/platform/tegra-i2c.1/i2c-1/1-0036/lm3533_bl_hvled 0
-
-    # Performance
-on property:sys.perf.profile=2
-    write /sys/devices/system/cpu/sched_mc_power_savings 0
-    write /sys/devices/system/cpu/cpuquiet/balanced/core_bias 3
-    write /sys/devices/system/cpu/cpuquiet/balanced/balance_level 75
-    write /sys/devices/system/cpu/cpuquiet/balanced/down_delay 2000
-    write /sys/devices/platform/tegra-i2c.1/i2c-1/1-0036/lm3533_bl_hvled 0
+    ## 1000=default Time delay before turning off cpu. Value in msec 
+    write /sys/devices/system/cpu/cpuquiet/balanced/down_delay 500
+    ## Backlight hvled 0-2, 0=maks
+#    write /sys/devices/platform/tegra-i2c.1/i2c-1/1-0036/lm3533_bl_hvled 2

@@ -20,18 +20,9 @@
     <!-- Enable notification counters in statusbar -->
     <integer name="def_notif_count">1</integer>
 
-    <!-- Right QS pulldown -->
-    <integer name="def_qs_quick_pulldown">1</integer>
-
     <!-- Default for Settings.Secure.WAKE_GESTURE_ENABLED -->
     <bool name="def_wake_gesture_enabled">false</bool>
 
-    <!-- Default value of Settings.System.ENABLE_FORWARD_LOOKUP -->
-    <integer name="def_forward_lookup">1</integer>
-
-    <!-- Default value of Settings.System.ENABLE_PEOPLE_LOOKUP -->
-    <integer name="def_people_lookup">0</integer>
-
-    <!-- Default value of Settings.System.ENABLE_REVERSE_LOOKUP -->
-    <integer name="def_reverse_lookup">0</integer>
+    <!-- Default state of tap to wake -->
+    <bool name="def_double_tap_to_wake">false</bool>
 </resources>

@@ -15,8 +15,9 @@ import android.telephony.PhoneNumberUtils;
 public class X3RIL extends RIL implements CommandsInterface {
     private boolean sentHwBootstrap = false;
 
-    public X3RIL(Context context, int networkMode, int cdmaSubscription, Integer instanceId) {
-        super(context, networkMode, cdmaSubscription, instanceId);
+    public X3RIL(Context context, int preferredNetworkType,
+            int cdmaSubscription, Integer instanceId) {
+        super(context, preferredNetworkType, cdmaSubscription, instanceId);
     }
 
     private static void x3Sleep(int value) {
@@ -300,6 +301,16 @@ public class X3RIL extends RIL implements CommandsInterface {
             CommandException ex = new CommandException(
                 CommandException.Error.REQUEST_NOT_SUPPORTED);
             AsyncResult.forMessage(response, null, ex);
+            response.sendToTarget();
+        }
+    }
+
+    @Override
+    public void getRadioCapability(Message response) {
+        riljLog("getRadioCapability: returning static radio capability");
+        if (response != null) {
+            Object ret = makeStaticRadioCapability();
+            AsyncResult.forMessage(response, ret, null);
             response.sendToTarget();
         }
     }

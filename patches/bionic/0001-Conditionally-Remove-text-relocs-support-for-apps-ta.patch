@@ -1,0 +1,58 @@
+From 676e343701d8e073b082c1afb70ecae36cd112f3 Mon Sep 17 00:00:00 2001
+From: Iftekhar Rifat <rifat662@gmail.com>
+Date: Thu, 12 Nov 2015 16:01:00 +0600
+Subject: [PATCH] Conditionally "Remove text-relocs support for apps targeting
+ M+"
+
+This reverts commit 3e6f7807541bab8157f9c26e55829fd193683349
+
+Set TARGET_NEEDS_TEXT_RELOCS_SUPPORT := true in BoardConfig for
+devices which need it.
+
+Change-Id: Ib20c8f9cf63f815536d03180f3f9c251bf444368
+
+Conflicts:
+	linker/Android.mk
+---
+ linker/Android.mk | 4 ++++
+ linker/linker.cpp | 2 ++
+ 2 files changed, 6 insertions(+)
+
+diff --git a/linker/Android.mk b/linker/Android.mk
+index 0bf8682..6596e89 100644
+--- a/linker/Android.mk
++++ b/linker/Android.mk
+@@ -56,6 +56,10 @@ ifeq ($(TARGET_NEEDS_NON_PIE_SUPPORT),true)
+   LOCAL_CFLAGS += -DENABLE_NON_PIE_SUPPORT
+ endif
+ 
++ifeq ($(TARGET_NEEDS_TEXT_RELOCS_SUPPORT),true)
++LOCAL_CFLAGS += -DENABLE_TEXT_RELOCS_SUPPORT
++endif
++
+ # we don't want crtbegin.o (because we have begin.o), so unset it
+ # just for this module
+ LOCAL_NO_CRT := true
+diff --git a/linker/linker.cpp b/linker/linker.cpp
+index 716bd65..74c0c1b 100644
+--- a/linker/linker.cpp
++++ b/linker/linker.cpp
+@@ -3056,6 +3056,7 @@ bool soinfo::link_image(const soinfo_list_t& global_group, const soinfo_list_t&
+ 
+ #if !defined(__LP64__)
+   if (has_text_relocations) {
++#ifndef ENABLE_TEXT_RELOCS_SUPPORT
+     // Fail if app is targeting sdk version > 22
+     // TODO (dimitry): remove != __ANDROID_API__ check once http://b/20020312 is fixed
+     if (get_application_target_sdk_version() != __ANDROID_API__
+@@ -3064,6 +3065,7 @@ bool soinfo::link_image(const soinfo_list_t& global_group, const soinfo_list_t&
+       DL_ERR("%s: has text relocations", get_realpath());
+       return false;
+     }
++#endif
+     // Make segments writable to allow text relocations to work properly. We will later call
+     // phdr_table_protect_segments() after all of them are applied and all constructors are run.
+ #if !defined(STOP_LOG_SPAM)
+-- 
+1.9.1
+

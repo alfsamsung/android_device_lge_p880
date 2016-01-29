@@ -2,12 +2,12 @@
 -include vendor/lge/p880/BoardConfigVendor.mk
 
 #Build variant; user,userdebug,eng
-TARGET_BUILD_VARIANT := user
+TARGET_BUILD_VARIANT := userdebug
 
 #GCC
-TARGET_GCC_VERSION_EXP := 4.9-sm
-KERNEL_TOOLCHAIN_PREFIX := arm-eabi-
-KERNEL_TOOLCHAIN := $(ANDROID_BUILD_TOP)/prebuilts/gcc/$(HOST_OS)-x86/arm/arm-eabi-5.2-ub/bin/
+#TARGET_GCC_VERSION_EXP := 4.9-sm
+#KERNEL_TOOLCHAIN_PREFIX := arm-eabi-
+#KERNEL_TOOLCHAIN := $(ANDROID_BUILD_TOP)/prebuilts/gcc/$(HOST_OS)-x86/arm/arm-eabi-5.2-ub/bin/
 
 # Skip droiddoc build to save build time
 BOARD_SKIP_ANDROID_DOC_BUILD := true
@@ -49,18 +49,18 @@ TARGET_USERIMAGES_USE_EXT4 := true
 BOARD_SYSTEMIMAGE_JOURNAL_SIZE := 0
 
 # Build the kernel
-BOARD_KERNEL_CMDLINE := androidboot.selinux=permissive
+BOARD_KERNEL_CMDLINE := androidboot.selinux=permissive androidboot.hardware=x3 androidboot.bootdevice=sdhci-tegra.3
 BOARD_KERNEL_BASE := 0x10000000
 BOARD_KERNEL_PAGESIZE := 2048
 
 ifeq ($(TARGET_BUILD_VARIANT),user)
-TARGET_KERNEL_CONFIG := cyanogenmod_x3-light_defconfig
+TARGET_KERNEL_CONFIG := cyanogenmod_x3-light-MM_defconfig
 COMMON_GLOBAL_CFLAGS += -DALLOW_LOCAL_PROP_OVERRIDE=1 -DALLOW_DISABLE_SELINUX=1 -DALLOW_ADBD_ROOT=1
 WITH_DEXPREOPT := true
 DONT_DEXPREOPT_PREBUILTS := true
 WITH_DEXPREOPT_COMP := true
 else
-TARGET_KERNEL_CONFIG := cyanogenmod_x3_defconfig
+TARGET_KERNEL_CONFIG := cyanogenmod_x3-MM_defconfig
 endif
 
 # Recovery
@@ -74,7 +74,6 @@ BOARD_CUSTOM_RECOVERY_KEYMAPPING := ../../device/lge/p880/recovery-keys.c
 
 # Egl
 BOARD_EGL_CFG := device/lge/p880/egl.cfg
-USE_OPENGL_RENDERER := true
 HWUI_COMPILE_FOR_PERF := true
 
 # Wifi related defines
@@ -120,10 +119,18 @@ BOARD_EGL_NEEDS_FNW := true
 # Lollipop
 USE_LEGACY_AUDIO_POLICY := 1
 BOARD_USES_LEGACY_MMAP := true
-COMMON_GLOBAL_CFLAGS += -DADD_LEGACY_ACQUIRE_BUFFER_SYMBOL
+#libsymbols COMMON_GLOBAL_CFLAGS += -DADD_LEGACY_ACQUIRE_BUFFER_SYMBOL
 TARGET_NEEDS_NON_PIE_SUPPORT := true
 COMMON_GLOBAL_CFLAGS += -DTARGET_NEEDS_HWC_V0
 COMMON_GLOBAL_CFLAGS += -DBOARD_CANT_REALLOCATE_OMX_BUFFERS
+
+# Marshmallow
+TARGET_NEEDS_TEXT_RELOCS_SUPPORT := true
+COMMON_GLOBAL_CFLAGS += -DDISABLE_ASHMEM_TRACKING
+## TODO: Do we need these??
+#TARGET_NO_SENSOR_PERMISSION_CHECK := true
+#TARGET_USE_COMPAT_GRALLOC_PERFORM := true
+#TARGET_REQUIRES_SYNCHRONOUS_SETSURFACE := true
 
 ## Radio fixes
 BOARD_RIL_CLASS := ../../../device/lge/p880/ril/
@@ -145,37 +152,6 @@ BOARD_BATTERY_DEVICE_NAME := battery
 TARGET_BOOTANIMATION_PRELOAD := true
 TARGET_BOOTANIMATION_TEXTURE_CACHE := true
 
-BOARD_SEPOLICY_DIRS += \
-    device/lge/p880/sepolicy
-
-BOARD_SEPOLICY_UNION += \
-        file_contexts \
-        genfs_contexts \
-        property_contexts \
-        service_contexts \
-        bluetooth.te \
-        device.te \
-        domain.te \
-        drmserver.te \
-        init.te \
-        init_shell.te \
-        file.te \
-        gpsd.te \
-        hostapd.te \
-        keystore.te \
-        lge_service.te \
-        lmkd.te \
-        mediaserver.te \
-        platform_app.te \
-        recovery.te \
-        rild.te \
-        sensors_config.te \
-        surfaceflinger.te \
-        system_app.te \
-        sysinit.te \
-        system_server.te \
-        ueventd.te \
-        vold.te \
-        wpa.te
+BOARD_SEPOLICY_DIRS += device/lge/p880/sepolicy
 
 BOARD_HARDWARE_CLASS := device/lge/p880/cmhw/

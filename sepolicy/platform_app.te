@@ -1,2 +1,4 @@
 # wifiscanner
 allow platform_app debugfs:file { open getattr read };
+#libwvm.so
+allow platform_app system_file:file execmod;

@@ -1,23 +1,23 @@
-From 97409e1122f6f7bc45c6fa35753444645fcc10e6 Mon Sep 17 00:00:00 2001
+From 191e9006333bc740984961bf23ee7eb21cb51e7e Mon Sep 17 00:00:00 2001
 From: alfsamsung <alfsamsung@hotmail.com>
 Date: Sun, 28 Dec 2014 21:44:51 +0100
 Subject: [PATCH] libgui: Add back BOARD_EGL_SKIP_FIRST_DEQUEUE
 
+Signed-off-by: alfsamsung <alfsamsung@hotmail.com>
 ---
- include/gui/Surface.h |  4 ++++
- libs/gui/Android.mk   |  4 ++++
+ include/gui/Surface.h |  3 +++
+ libs/gui/Android.mk   |  5 ++++-
  libs/gui/Surface.cpp  | 23 ++++++++++++++++++-----
- 3 files changed, 26 insertions(+), 5 deletions(-)
+ 3 files changed, 25 insertions(+), 6 deletions(-)
 
 diff --git a/include/gui/Surface.h b/include/gui/Surface.h
-index 9d21c49..911bf9e 100644
+index 72f1067..62bdc19 100644
 --- a/include/gui/Surface.h
 +++ b/include/gui/Surface.h
-@@ -310,6 +310,10 @@ private:
- 
-     // must be accessed from lock/unlock thread only
-     Region mDirtyRegion;
-+
+@@ -317,6 +317,9 @@ private:
+     // Stores the current generation number. See setGenerationNumber and
+     // IGraphicBufferProducer::setGenerationNumber for more information.
+     uint32_t mGenerationNumber;
 +#ifdef SURFACE_SKIP_FIRST_DEQUEUE
 +    bool                        mDequeuedOnce;
 +#endif
@@ -25,25 +25,28 @@ index 9d21c49..911bf9e 100644
  
  }; // namespace android
 diff --git a/libs/gui/Android.mk b/libs/gui/Android.mk
-index b3a3c71..c5a68e8 100644
+index 76aec6e..41beb7f 100644
 --- a/libs/gui/Android.mk
 +++ b/libs/gui/Android.mk
-@@ -51,6 +51,10 @@ ifeq ($(TARGET_USES_QCOM_BSP),true)
-     LOCAL_C_INCLUDES += $(call project-path-for,qcom-display)/libgralloc
- endif
+@@ -81,9 +81,12 @@ LOCAL_SHARED_LIBRARIES := \
+ 	libutils \
+ 	liblog
+ 
+-
+ LOCAL_MODULE := libgui
  
 +ifeq ($(BOARD_EGL_SKIP_FIRST_DEQUEUE),true)
 +    LOCAL_CFLAGS += -DSURFACE_SKIP_FIRST_DEQUEUE
 +endif
 +
- ifeq ($(BOARD_USE_MHEAP_SCREENSHOT),true)
-     LOCAL_CFLAGS += -DUSE_MHEAP_SCREENSHOT
+ ifeq ($(TARGET_BOARD_PLATFORM), tegra)
+ 	LOCAL_CFLAGS += -DDONT_USE_FENCE_SYNC
  endif
 diff --git a/libs/gui/Surface.cpp b/libs/gui/Surface.cpp
-index 2a0f2cf..4b9bb0d 100644
+index 1abb6c3..cd188f4 100644
 --- a/libs/gui/Surface.cpp
 +++ b/libs/gui/Surface.cpp
-@@ -87,6 +87,9 @@ Surface::Surface(
+@@ -80,6 +80,9 @@ Surface::Surface(
      mConnectedToCpu = false;
      mProducerControlledByApp = controlledByApp;
      mSwapIntervalZero = false;
@@ -53,7 +56,7 @@ index 2a0f2cf..4b9bb0d 100644
  }
  
  Surface::~Surface() {
-@@ -276,6 +279,9 @@ int Surface::dequeueBuffer(android_native_buffer_t** buffer, int* fenceFd) {
+@@ -270,6 +273,9 @@ int Surface::dequeueBuffer(android_native_buffer_t** buffer, int* fenceFd) {
      }
  
      *buffer = gbuf.get();
@@ -63,7 +66,7 @@ index 2a0f2cf..4b9bb0d 100644
      return OK;
  }
  
-@@ -387,12 +393,19 @@ int Surface::query(int what, int* value) const {
+@@ -441,12 +447,19 @@ int Surface::query(int what, int* value) const {
                  }
                  break;
              case NATIVE_WINDOW_QUEUES_TO_WINDOW_COMPOSER: {

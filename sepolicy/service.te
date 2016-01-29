@@ -1,0 +1,4 @@
+#type media.nvidia.audio_alsa,    service_manager_type;
+#type lgsecclk,                   service_manager_type;
+type lgdrm,                      service_manager_type;
+#type NvCpuService,               service_manager_type;

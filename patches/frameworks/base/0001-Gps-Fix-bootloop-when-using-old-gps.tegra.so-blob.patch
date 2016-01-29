@@ -1,18 +1,20 @@
-From b9222d3bcde0680566ee38954fb65d7c433cf59f Mon Sep 17 00:00:00 2001
+From b36ecb71bdac95d463bd4eb0eb6e69fee20d843c Mon Sep 17 00:00:00 2001
 From: alfsamsung <alfsamsung@hotmail.com>
 Date: Mon, 23 Feb 2015 18:46:27 +0100
 Subject: [PATCH] Gps: Fix bootloop when using old gps.tegra.so blob.
 
 Dont send native_set_agps_server() during first boot.
+
+Signed-off-by: alfsamsung <alfsamsung@hotmail.com>
 ---
  .../core/java/com/android/server/location/GpsLocationProvider.java  | 6 +++++-
  1 file changed, 5 insertions(+), 1 deletion(-)
 
 diff --git a/services/core/java/com/android/server/location/GpsLocationProvider.java b/services/core/java/com/android/server/location/GpsLocationProvider.java
-index 8e33822..2f48eb7 100644
+index 11de1a2..3704a9e 100644
 --- a/services/core/java/com/android/server/location/GpsLocationProvider.java
 +++ b/services/core/java/com/android/server/location/GpsLocationProvider.java
-@@ -300,6 +300,9 @@ public class GpsLocationProvider implements LocationProviderInterface {
+@@ -298,6 +298,9 @@ public class GpsLocationProvider implements LocationProviderInterface {
  
      // true if we have network connectivity
      private boolean mNetworkAvailable;
@@ -22,7 +24,7 @@ index 8e33822..2f48eb7 100644
  
      // states for injecting ntp and downloading xtra data
      private static final int STATE_PENDING_NETWORK = 0;
-@@ -956,11 +959,12 @@ public class GpsLocationProvider implements LocationProviderInterface {
+@@ -950,11 +953,12 @@ public class GpsLocationProvider implements LocationProviderInterface {
                  Log.e(TAG, "unable to parse SUPL_PORT: " + portString);
              }
          }

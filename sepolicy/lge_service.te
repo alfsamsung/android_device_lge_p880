@@ -4,8 +4,10 @@ type lgsecclk_exec, exec_type, file_type;
 init_daemon_domain(lgsecclk)
 typeattribute lgsecclk mlstrustedsubject;
 
-allow lgsecclk system_server_service:service_manager add;
-allow lgsecclk self:process execmem;
+#allow lgsecclk lgsecclk_exec:file execmod;
+#allow drmserver drmserver_exec:file execmod;
+allow { lgsecclk drmserver } system_file:file execmod;
+allow { lgdrm lgsecclk rild } drmserver_service:service_manager { add find };
 allow lgsecclk calibration_data_file:dir { read search open };
 allow lgsecclk calibration_data_file:file { read write getattr open };
 allow lgsecclk unlabeled:file { read write getattr open };
@@ -15,7 +17,6 @@ allow servicemanager lgsecclk:process getattr;
 binder_call(lgsecclk, servicemanager)
 
 # lgdrm
-allow drmserver self:process execmem;
 allow drmserver drm_data_file:file rw_file_perms;
 allow drmserver drm_data_file:file lock;
 allow drmserver drm_data_file:dir rw_file_perms;
@@ -28,10 +29,13 @@ type NvCpuService_exec, exec_type, file_type;
 init_daemon_domain(NvCpuService)
 typeattribute NvCpuService mlstrustedsubject;
 
-allow NvCpuService system_server_service:service_manager add;
-allow NvCpuService self:process execmem;
+allow NvCpuService hardware_service:service_manager { add find };
+allow NvCpuService permission_service:service_manager { add find };
+#allow NvCpuService NvCpuService_exec:file execmod;
+allow NvCpuService system_file:file execmod;
 allow NvCpuService sysfs_devices_system_cpu:chr_file rw_file_perms;
 allow servicemanager NvCpuService:dir { read search open };
 allow servicemanager NvCpuService:file { read write open };
 allow servicemanager NvCpuService:process getattr; 
 binder_call(NvCpuService, servicemanager)
+binder_call(NvCpuService, system_server)

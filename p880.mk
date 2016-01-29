@@ -114,9 +114,20 @@ PRODUCT_PACKAGES += \
     Tag \
     com.android.nfc_extras
 
-# Preload help lib for missing symbols
+#help GL, ril and camera work in M
 PRODUCT_PACKAGES += \
-    libx3_misc_cpp
+    libdgv1 \
+    libEGL_tegra \
+    libEGL_tegra_impl \
+    libGLESv1_CM_tegra \
+    libGLESv2_tegra \
+    libx3_ril \
+    libx3_misc_cpp \
+    libx3_cam \
+    libboringssl-compat
+
+# Libstlport needed by lib/libnvcap.so
+PRODUCT_PACKAGES += libstlport
 
 # P880 device libs
 PRODUCT_PACKAGES += \
@@ -127,8 +138,7 @@ PRODUCT_PACKAGES += \
 PRODUCT_PACKAGES += \
     audio.a2dp.default \
     com.android.future.usb.accessory \
-    libaudioutils \
-    OmniSwitch
+    libaudioutils
 
 # Charger mode
 PRODUCT_PACKAGES += \

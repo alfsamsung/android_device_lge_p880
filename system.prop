@@ -9,6 +9,11 @@ rild.libpath=/system/lib/lge-ril.so
 rild.libargs=-d /dev/ttyACM0
 ro.telephony.ril_class=X3RIL
 
+#Fix UICC in M
+ro.telephony.ril.config=simactivation
+ro.telephony.default_network=3
+ro.ril.def.preferred.network=3
+
 # enable insecure AGPS
 ro.ril.def.agps.mode=2
 
@@ -23,8 +28,6 @@ debug.nfc.se=false
 wifi.interface=wlan0
 wlan.chip.vendor=brcm
 wlan.chip.version=bcm4330x
-wifi.supplicant_scan_interval=200
-ro.wifi.channels=14
 
 #Pre KitKat
 ro.bq.gpu_to_cpu_unsupported=1
@@ -35,7 +38,6 @@ ro.zygote.disable_gl_preload=true
 #MISC
 ro.bt.bdaddr_path=/sys/devices/platform/bd_address/bdaddr_if
 ro.opengles.version=131072
-persist.sys.usb.config=mtp,adb
 debug.choreographer.skipwarning=99
 
 # lollipop hwui, disable dirty regions invalidation
@@ -65,7 +67,7 @@ ro.sys.fw.bg_apps_limit=22
 #ro.sys.fw.trim_cache_percent=40
 
 #Enable B service aging propagation on memory pressure.
-ro.sys.fw.bservice_enable=true 
+#ro.sys.fw.bservice_enable=true 
 
 #Audioflinger memory alloc multiplier #2, min=1 max=2
 af.fast_track_multiplier=1

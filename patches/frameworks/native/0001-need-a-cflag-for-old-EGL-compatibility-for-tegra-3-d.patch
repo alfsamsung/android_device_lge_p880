@@ -1,4 +1,4 @@
-From a0e59a64c5c8e16f733c6789ba2e05ccec769b84 Mon Sep 17 00:00:00 2001
+From 72e96f0c97925ea8441a56ba9a8bd7905477799c Mon Sep 17 00:00:00 2001
 From: alfsamsung <alfsamsung@hotmail.com>
 Date: Sun, 21 Dec 2014 01:12:03 +0100
 Subject: [PATCH] need a cflag for "old" EGL compatibility for tegra 3 device.
@@ -37,17 +37,33 @@ Michael Bestas originally worked on this here:
 
     Change-Id: I78dd6479e2cb2370efceb6840b2063808bc885f0
     Signed-off-by: Taylor Wagner <taylor.m.wagner@gmail.com>
----
- services/surfaceflinger/Android.mk        |  4 ++++
- services/surfaceflinger/DisplayDevice.cpp | 10 +++++++++-
- 2 files changed, 13 insertions(+), 1 deletion(-)
 
+Signed-off-by: alfsamsung <alfsamsung@hotmail.com>
+---
+ include/ui/FramebufferNativeWindow.h      | 2 +-
+ services/surfaceflinger/Android.mk        | 4 ++++
+ services/surfaceflinger/DisplayDevice.cpp | 8 ++++++++
+ 3 files changed, 13 insertions(+), 1 deletion(-)
+
+diff --git a/include/ui/FramebufferNativeWindow.h b/include/ui/FramebufferNativeWindow.h
+index 6b66d5f..2eb1cc1 100644
+--- a/include/ui/FramebufferNativeWindow.h
++++ b/include/ui/FramebufferNativeWindow.h
+@@ -15,7 +15,7 @@
+  */
+ 
+ #ifndef INCLUDED_FROM_FRAMEBUFFER_NATIVE_WINDOW_CPP
+-#warning "FramebufferNativeWindow is deprecated"
++//#warning "FramebufferNativeWindow is deprecated"
+ #endif
+ 
+ #ifndef ANDROID_FRAMEBUFFER_NATIVE_WINDOW_H
 diff --git a/services/surfaceflinger/Android.mk b/services/surfaceflinger/Android.mk
-index 39cc4b4..f1eabf5 100644
+index c2b74ed..4a17413 100644
 --- a/services/surfaceflinger/Android.mk
 +++ b/services/surfaceflinger/Android.mk
-@@ -55,6 +55,10 @@ ifeq ($(TARGET_DISABLE_TRIPLE_BUFFERING),true)
- 	LOCAL_CFLAGS += -DTARGET_DISABLE_TRIPLE_BUFFERING
+@@ -56,6 +56,10 @@ ifeq ($(TARGET_FORCE_HWC_FOR_VIRTUAL_DISPLAYS),true)
+     LOCAL_CFLAGS += -DFORCE_HWC_COPY_FOR_VIRTUAL_DISPLAYS
  endif
  
 +ifeq ($(BOARD_EGL_NEEDS_FNW),true)
@@ -55,10 +71,10 @@ index 39cc4b4..f1eabf5 100644
 +endif
 +
  ifneq ($(NUM_FRAMEBUFFER_SURFACE_BUFFERS),)
-   LOCAL_CFLAGS += -DNUM_FRAMEBUFFER_SURFACE_BUFFERS=$(NUM_FRAMEBUFFER_SURFACE_BUFFERS)
+     LOCAL_CFLAGS += -DNUM_FRAMEBUFFER_SURFACE_BUFFERS=$(NUM_FRAMEBUFFER_SURFACE_BUFFERS)
  endif
 diff --git a/services/surfaceflinger/DisplayDevice.cpp b/services/surfaceflinger/DisplayDevice.cpp
-index 76ab552..0e32ee9 100644
+index f597b73..21fe644 100644
 --- a/services/surfaceflinger/DisplayDevice.cpp
 +++ b/services/surfaceflinger/DisplayDevice.cpp
 @@ -29,6 +29,10 @@
@@ -72,20 +88,18 @@ index 76ab552..0e32ee9 100644
  #include <hardware/gralloc.h>
  
  #include "DisplayHardware/DisplaySurface.h"
-@@ -78,8 +82,12 @@ DisplayDevice::DisplayDevice(
-       mActiveConfig(0)
+@@ -90,7 +94,11 @@ DisplayDevice::DisplayDevice(
  {
-     mNativeWindow = new Surface(producer, false);
+     Surface* surface;
+     mNativeWindow = surface = new Surface(producer, false);
 +#ifndef EGL_NEEDS_FNW
      ANativeWindow* const window = mNativeWindow.get();
--
 +#else
 +    ANativeWindow* const window = new FramebufferNativeWindow();
 +#endif
-+    
+     char property[PROPERTY_VALUE_MAX];
+ 
      /*
-      * Create our display's surface
-      */
 -- 
 1.9.1
 

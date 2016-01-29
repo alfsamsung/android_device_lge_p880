@@ -1,0 +1,5 @@
+#lge-ril
+allow servicemanager rild:dir r_file_perms;
+allow servicemanager rild:dir search;
+allow servicemanager rild:file rw_file_perms;
+allow servicemanager rild:process getattr;

@@ -1,0 +1,8 @@
+type ext4fs, domain;
+type ext4fs_exec, exec_type, file_type;
+
+init_daemon_domain(ext4fs)
+
+allow ext4fs userdata_block_device:blk_file rw_file_perms;
+allow ext4fs cache_block_device:blk_file rw_file_perms;
+allow ext4fs block_device:dir search;

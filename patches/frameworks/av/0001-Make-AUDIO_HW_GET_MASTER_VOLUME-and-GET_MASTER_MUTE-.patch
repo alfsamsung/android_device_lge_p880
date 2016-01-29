@@ -1,0 +1,69 @@
+From 1df15f40573b5ad2dfe62e55b4b2f3386c97d500 Mon Sep 17 00:00:00 2001
+From: alfsamsung <alfsamsung@hotmail.com>
+Date: Tue, 19 Jan 2016 17:27:47 +0100
+Subject: [PATCH] Make AUDIO_HW_GET_MASTER_VOLUME and GET_MASTER_MUTE optional
+ for MR0_AUDIO_BLOB
+
+Change-Id: Icb9bf548764be6947df6f3d8a1b9178c123e27a3
+---
+ services/audioflinger/AudioFlinger.cpp | 5 ++++-
+ services/audioflinger/AudioFlinger.h   | 4 +++-
+ 2 files changed, 7 insertions(+), 2 deletions(-)
+
+diff --git a/services/audioflinger/AudioFlinger.cpp b/services/audioflinger/AudioFlinger.cpp
+index 23215dd..73648c6 100644
+--- a/services/audioflinger/AudioFlinger.cpp
++++ b/services/audioflinger/AudioFlinger.cpp
+@@ -1655,6 +1655,7 @@ audio_module_handle_t AudioFlinger::loadHwModule_l(const char *name)
+     {  // scope for auto-lock pattern
+         AutoMutex lock(mHardwareLock);
+ 
++#ifndef MR0_AUDIO_BLOB
+         if (0 == mAudioHwDevs.size()) {
+             mHardwareStatus = AUDIO_HW_GET_MASTER_VOLUME;
+             if (NULL != dev->get_master_volume) {
+@@ -1672,6 +1673,7 @@ audio_module_handle_t AudioFlinger::loadHwModule_l(const char *name)
+                 }
+             }
+         }
++#endif
+ 
+         mHardwareStatus = AUDIO_HW_SET_MASTER_VOLUME;
+         if ((NULL != dev->set_master_volume) &&
+@@ -1680,13 +1682,14 @@ audio_module_handle_t AudioFlinger::loadHwModule_l(const char *name)
+                     AudioHwDevice::AHWD_CAN_SET_MASTER_VOLUME);
+         }
+ 
++#ifndef MR0_AUDIO_BLOB
+         mHardwareStatus = AUDIO_HW_SET_MASTER_MUTE;
+         if ((NULL != dev->set_master_mute) &&
+             (OK == dev->set_master_mute(dev, mMasterMute))) {
+             flags = static_cast<AudioHwDevice::Flags>(flags |
+                     AudioHwDevice::AHWD_CAN_SET_MASTER_MUTE);
+         }
+-
++#endif
+         mHardwareStatus = AUDIO_HW_IDLE;
+     }
+ 
+diff --git a/services/audioflinger/AudioFlinger.h b/services/audioflinger/AudioFlinger.h
+index 08fa70d..c567501 100644
+--- a/services/audioflinger/AudioFlinger.h
++++ b/services/audioflinger/AudioFlinger.h
+@@ -671,10 +671,12 @@ private:
+         AUDIO_HW_SET_VOICE_VOLUME,      // set_voice_volume
+         AUDIO_HW_SET_PARAMETER,         // set_parameters
+         AUDIO_HW_GET_INPUT_BUFFER_SIZE, // get_input_buffer_size
++#ifndef MR0_AUDIO_BLOB
+         AUDIO_HW_GET_MASTER_VOLUME,     // get_master_volume
++        AUDIO_HW_GET_MASTER_MUTE,       // get_master_mute
++#endif
+         AUDIO_HW_GET_PARAMETER,         // get_parameters
+         AUDIO_HW_SET_MASTER_MUTE,       // set_master_mute
+-        AUDIO_HW_GET_MASTER_MUTE,       // get_master_mute
+     };
+ 
+     mutable     hardware_call_state                 mHardwareStatus;    // for dump only
+-- 
+1.9.1
+

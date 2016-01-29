@@ -1,4 +1,4 @@
-From 13bb76471d8390ffdf9963b48058e9b1af4e4508 Mon Sep 17 00:00:00 2001
+From 08ad0451976ef055e776bd77e61916ec4ac2fa43 Mon Sep 17 00:00:00 2001
 From: alfsamsung <alfsamsung@hotmail.com>
 Date: Tue, 24 Feb 2015 06:07:54 +0100
 Subject: [PATCH] HWC: Add back support for HWC_DEVICE_API_VERSION < 1
@@ -9,25 +9,19 @@ in BoardConfig.mk
 Only tested on nvidia API_VERSION_0_3 (p880)
 
 Change-Id: I1cfe963239c70fe7279fc88e8389c82eec9ce3b7
+
+Signed-off-by: alfsamsung <alfsamsung@hotmail.com>
 ---
- services/surfaceflinger/Android.mk                 |   7 +-
- .../DisplayHardware/HWComposer_v0.cpp              | 987 +++++++++++++++++++++
- 2 files changed, 993 insertions(+), 1 deletion(-)
+ services/surfaceflinger/Android.mk                 |   9 +-
+ .../DisplayHardware/HWComposer_v0.cpp              | 998 +++++++++++++++++++++
+ 2 files changed, 1006 insertions(+), 1 deletion(-)
  create mode 100644 services/surfaceflinger/DisplayHardware/HWComposer_v0.cpp
 
 diff --git a/services/surfaceflinger/Android.mk b/services/surfaceflinger/Android.mk
-index f9a6852..2d5bbd9 100644
+index 9e3cfac..6bf4f02 100644
 --- a/services/surfaceflinger/Android.mk
 +++ b/services/surfaceflinger/Android.mk
-@@ -4,6 +4,7 @@ include $(CLEAR_VARS)
- LOCAL_CLANG := true
- 
- LOCAL_ADDITIONAL_DEPENDENCIES := $(LOCAL_PATH)/Android.mk
-+
- LOCAL_SRC_FILES:= \
-     Client.cpp \
-     DisplayDevice.cpp \
-@@ -20,7 +21,6 @@ LOCAL_SRC_FILES:= \
+@@ -20,7 +20,6 @@ LOCAL_SRC_FILES := \
      SurfaceFlingerConsumer.cpp \
      Transform.cpp \
      DisplayHardware/FramebufferSurface.cpp \
@@ -35,24 +29,34 @@ index f9a6852..2d5bbd9 100644
      DisplayHardware/PowerHAL.cpp \
      DisplayHardware/VirtualDisplaySurface.cpp \
      Effects/Daltonizer.cpp \
-@@ -36,6 +36,11 @@ LOCAL_SRC_FILES:= \
-     RenderEngine/GLES10RenderEngine.cpp \
+@@ -37,6 +36,11 @@ LOCAL_SRC_FILES := \
      RenderEngine/GLES11RenderEngine.cpp \
-     RenderEngine/GLES20RenderEngine.cpp
+     RenderEngine/GLES20RenderEngine.cpp \
+     DisplayUtils.cpp
 +ifneq (,$(findstring TARGET_NEEDS_HWC_V0,$(LOCAL_CFLAGS)))
 +LOCAL_SRC_FILES += DisplayHardware/HWComposer.cpp
 +else
 +LOCAL_SRC_FILES += DisplayHardware/HWComposer_v0.cpp
 +endif
  
- LOCAL_CFLAGS:= -DLOG_TAG=\"SurfaceFlinger\"
+ LOCAL_CFLAGS := -DLOG_TAG=\"SurfaceFlinger\"
  LOCAL_CFLAGS += -DGL_GLEXT_PROTOTYPES -DEGL_EGLEXT_PROTOTYPES
+@@ -136,6 +140,9 @@ endif
+ LOCAL_MODULE := libsurfaceflinger
+ 
+ LOCAL_CFLAGS += -Wall -Werror -Wunused -Wunreachable-code
++ifeq (,$(findstring TARGET_NEEDS_HWC_V0,$(LOCAL_CFLAGS)))
++LOCAL_CFLAGS += -Wno-unused -Wno-unused-parameter -Wno-sign-conversion
++endif
+ 
+ include $(BUILD_SHARED_LIBRARY)
+ 
 diff --git a/services/surfaceflinger/DisplayHardware/HWComposer_v0.cpp b/services/surfaceflinger/DisplayHardware/HWComposer_v0.cpp
 new file mode 100644
-index 0000000..a71c561
+index 0000000..5c498e6
 --- /dev/null
 +++ b/services/surfaceflinger/DisplayHardware/HWComposer_v0.cpp
-@@ -0,0 +1,987 @@
+@@ -0,0 +1,998 @@
 +/*
 + * Copyright (C) 2010 The Android Open Source Project
 + *
@@ -566,7 +570,7 @@ index 0000000..a71c561
 +}
 +
 +status_t HWComposer::prepare() {
-+    Mutex::Autolock _l(mDrawLock);
++    Mutex::Autolock _l(mDisplayLock);
 +    for (size_t i=0 ; i<mNumDisplays ; i++) {
 +        DisplayData& disp(mDisplayData[i]);
 +        if (disp.framebufferTarget) {
@@ -806,20 +810,37 @@ index 0000000..a71c561
 +    }
 +    virtual sp<Fence> getAndResetReleaseFence() {
 +        // not supported on VERSION_03
++        ALOGV("getAndResetReleaseFence is not supported");
 +        return Fence::NO_FENCE;
++    }
++    virtual void setAcquireFenceFd(int fenceFd) {
++        if (fenceFd != -1) {
++            ALOGV("HWC 0.x can't handle acquire fences");
++            close(fenceFd);
++        }
 +    }
 +    virtual void setIsCursorLayerHint(bool isCursor) {
 +        // not supported on VERSION_03
-+        return;
++        ALOGV("setIsCursorLayerHint is not supported");
 +    }
 +    virtual void setSidebandStream(const sp<NativeHandle>& stream) {
 +        // not supported on VERSION_03
-+        return;
++        ALOGV("setSidebandStream is not supported");
 +    }
 +    virtual void setAnimating(bool animating) {
 +        // not supported on VERSION_03
++        ALOGV("setAnimating is not supported");
++    }
++    virtual void setSurfaceDamage(const Region& reg) {
++        // not supported on VERSION_03
++        ALOGV("setSurfaceDamage is not supported");
 +        return;
 +    }
++    virtual void setDim() {
++        setSkip(false);
++        getLayer()->flags |= 0x80000000;
++    }
++
 +    bool isStatusBar(hwc_layer_t* layer) {
 +        /* Getting the display details into the iterator is more trouble than
 +         * it's worth, so do a rough approximation */
@@ -852,12 +873,6 @@ index 0000000..a71c561
 +        }
 +        if (alpha < 0xFF || forceSkip) {
 +            getLayer()->flags |= HWC_SKIP_LAYER;
-+        }
-+    }
-+    virtual void setAcquireFenceFd(int fenceFd) {
-+        if (fenceFd != -1) {
-+            ALOGE("HWC 0.x can't handle acquire fences");
-+            close(fenceFd);
 +        }
 +    }
 +    virtual void setDefaultState() {
@@ -963,7 +978,7 @@ index 0000000..a71c561
 +}
 +
 +void HWComposer::dump(String8& result) const {
-+    Mutex::Autolock _l(mDrawLock);
++    Mutex::Autolock _l(mDisplayLock);
 +}
 +
 +// ---------------------------------------------------------------------------

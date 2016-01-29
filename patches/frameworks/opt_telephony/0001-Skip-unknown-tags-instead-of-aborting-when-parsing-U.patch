@@ -1,0 +1,47 @@
+From 20a98463f2d32fe67273847dbb717c3ed7a146ae Mon Sep 17 00:00:00 2001
+From: Thomas Wendt <thoemy@gmx.net>
+Date: Mon, 16 Feb 2015 00:57:51 +0100
+Subject: [PATCH] Skip unknown tags instead of aborting when parsing UICC TLV
+ data
+
+This fixes issues like broken mobile data and no outgoing calls for SIM
+cards that return unkown tags (at least F1 has been seen in the wild).
+
+Change-Id: I4fe5ddc7992b1b3bb025f2a5f9e2b3f410d54841
+---
+ src/java/com/android/internal/telephony/uicc/UiccTlvData.java | 9 ++++++---
+ 1 file changed, 6 insertions(+), 3 deletions(-)
+
+diff --git a/src/java/com/android/internal/telephony/uicc/UiccTlvData.java b/src/java/com/android/internal/telephony/uicc/UiccTlvData.java
+index 5f35e41..17f594c 100644
+--- a/src/java/com/android/internal/telephony/uicc/UiccTlvData.java
++++ b/src/java/com/android/internal/telephony/uicc/UiccTlvData.java
+@@ -1,9 +1,12 @@
+ package com.android.internal.telephony.uicc;
+ 
++import android.telephony.Rlog;
++
+ /**
+  * UICC TLV Data Parser according to ETSI TS 102 221 spec.
+  */
+ public class UiccTlvData {
++    private static final String LOG_TAG = "UiccTlvData";
+ 
+     private static final int TLV_FORMAT_ID = 0x62;
+ 
+@@ -82,9 +85,9 @@ public class UiccTlvData {
+                         break;
+ 
+                     default:
+-                        //Unknown TAG
+-                        throw new IccFileTypeMismatch();
+-
++                        Rlog.d(LOG_TAG, "Unknown tag 0x" + String.format("%02X", currentTag));
++                        currentLocation = parsedData.parseSomeTag(data, currentLocation);
++                        break;
+                 }
+             }
+ 
+-- 
+1.9.1
+

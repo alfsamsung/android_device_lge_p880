@@ -1,0 +1,9 @@
+<?xml version='1.0' encoding='utf-8' standalone='yes' ?>
+<carrier_config_list>
+<carrier_config>
+<boolean name="ignore_sim_network_locked_events_bool" value="true" />
+<!--<boolean name="has_in_call_noise_suppression_bool" value="true" /> -->
+<boolean name="world_phone_bool" value="false" />
+<boolean name="show_cdma_choices_bool" value="false" />
+</carrier_config>
+</carrier_config_list> 

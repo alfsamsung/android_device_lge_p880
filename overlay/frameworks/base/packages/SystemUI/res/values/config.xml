@@ -16,11 +16,6 @@
   -->
 
 <resources>
-    <!-- The default tiles to display in QuickSettings -->
-    <string name="quick_settings_tiles_default" translatable="false">
-        wifi,bt,cell,data,airplane,rotation,flashlight,location,notifications
-    </string>
-
     <!-- Show camera affordance on Keyguard -->
     <bool name="config_keyguardShowCameraAffordance">true</bool>
 
@@ -38,7 +33,6 @@
     <!-- Whether to enable data switch or not -->
     <bool name="config_enableDataSwitch">true</bool>
 
-<!--TEST--> 
     <!-- Doze: does this device support STATE_DOZE and STATE_DOZE_SUSPEND? -->
     <bool name="doze_display_state_supported">true</bool>
     <bool name="doze_pulse_on_pick_up">true</bool>

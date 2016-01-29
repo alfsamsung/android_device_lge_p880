@@ -1,0 +1,65 @@
+From 302410614800f9461c3dff78bef74ef597817ff3 Mon Sep 17 00:00:00 2001
+From: alfsamsung <alfsamsung@hotmail.com>
+Date: Thu, 4 Feb 2016 17:31:50 +0100
+Subject: [PATCH] audio: MR0_AUDIO_BLOB re-activated, add back setStreamOutput
+
+Change-Id: Iddc0a077fb419767bb15aefa28ac6f420a06266f
+---
+ audio/AudioPolicyCompatClient.cpp              | 8 ++++++++
+ audio/AudioPolicyCompatClient.h                | 3 +++
+ include/hardware_legacy/AudioPolicyInterface.h | 6 ++++++
+ 3 files changed, 17 insertions(+)
+
+diff --git a/audio/AudioPolicyCompatClient.cpp b/audio/AudioPolicyCompatClient.cpp
+index 9d02d98..f40484d 100644
+--- a/audio/AudioPolicyCompatClient.cpp
++++ b/audio/AudioPolicyCompatClient.cpp
+@@ -90,6 +90,14 @@ status_t AudioPolicyCompatClient::invalidateStream(AudioSystem::stream_type stre
+     return mServiceOps->invalidate_stream(mService, (audio_stream_type_t)stream);
+ }
+ 
++#ifdef MR0_AUDIO_BLOB
++status_t AudioPolicyCompatClient::setStreamOutput(AudioSystem::stream_type stream,
++                                             audio_io_handle_t output)
++{
++    return mServiceOps->invalidate_stream(mService, (audio_stream_type_t)stream);
++}
++#endif
++
+ status_t AudioPolicyCompatClient::moveEffects(int session, audio_io_handle_t srcOutput,
+                                                audio_io_handle_t dstOutput)
+ {
+diff --git a/audio/AudioPolicyCompatClient.h b/audio/AudioPolicyCompatClient.h
+index 19f76e1..807c603 100644
+--- a/audio/AudioPolicyCompatClient.h
++++ b/audio/AudioPolicyCompatClient.h
+@@ -57,6 +57,9 @@ public:
+                                         audio_channel_mask_t *pChannelMask);
+     virtual status_t closeInput(audio_io_handle_t input);
+     virtual status_t invalidateStream(AudioSystem::stream_type stream);
++#ifdef MR0_AUDIO_BLOB
++    virtual status_t setStreamOutput(AudioSystem::stream_type stream, audio_io_handle_t output);
++#endif
+     virtual status_t moveEffects(int session,
+                                  audio_io_handle_t srcOutput,
+                                  audio_io_handle_t dstOutput);
+diff --git a/include/hardware_legacy/AudioPolicyInterface.h b/include/hardware_legacy/AudioPolicyInterface.h
+index da03ee3..7030999 100644
+--- a/include/hardware_legacy/AudioPolicyInterface.h
++++ b/include/hardware_legacy/AudioPolicyInterface.h
+@@ -232,6 +232,12 @@ public:
+     // invalidate a stream type, causing a reroute to an unspecified new output
+     virtual status_t invalidateStream(AudioSystem::stream_type stream) = 0;
+ 
++#ifdef MR0_AUDIO_BLOB
++    // FIXME ignores output, should be renamed to invalidateStreamOuput(stream)
++    // reroute a given stream type to the specified output
++    virtual status_t setStreamOutput(AudioSystem::stream_type stream, audio_io_handle_t output) = 0;
++#endif
++
+     // function enabling to send proprietary informations directly from audio policy manager to audio hardware interface.
+     virtual void setParameters(audio_io_handle_t ioHandle, const String8& keyValuePairs, int delayMs = 0) = 0;
+     // function enabling to receive proprietary informations directly from audio hardware interface to audio policy manager.
+-- 
+1.9.1
+

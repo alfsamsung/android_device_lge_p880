@@ -1,1 +1,29 @@
-allow init net_radio_prop:property_service set;
+# Adding allow rule for search on /fuse
+allow init fuse:dir { search mounton };
+allow init self:capability sys_module;
+allow init {
+    cache_file
+    storage_file
+}:dir mounton;
+allow init kmsg_device:chr_file write;
+
+#For insmod to search module key for signature verification
+allow init kernel:key search;
+
+#For sdcard
+allow init tmpfs:lnk_file create_file_perms;
+
+#NVA
+allow init block_device:lnk_file setattr;
+
+#Certain domains needs LD_PRELOAD passed from init
+#allow it for most domain. Do not honor LD_PRELOAD
+#for lmkd
+allow init { domain -lmkd }:process noatsecure;
+
+# allow setting proc_dirt_ratio fron init.rc scripts
+allow init proc_dirty_ratio:file rw_file_perms;
+
+allow init radio_device:blk_file rw_file_perms;
+
+set_prop(init, net_radio_prop)

@@ -2,9 +2,7 @@
 allow rild radio_device:blk_file rw_file_perms;
 allow rild radio_data_file:file { rw_file_perms setattr };
 
-allow appdomain { nvhost_writable_device gpu_device }:chr_file rw_file_perms;
-
-allow zygote { video_device console_device nvhost_writable_device knv_device }:chr_file rw_file_perms;
+allow zygote { video_device console_device knv_device }:chr_file { rw_file_perms execute };
 
 # Allow querying of asec size on SD card
 allow installd sdcard_external:dir search;
@@ -21,6 +19,12 @@ allow netd self:capability fsetid;
 # Fm radio
 allow platform_app video_device:chr_file rw_file_perms;
 
-# bootanim
-allow bootanim nvhost_writable_device:chr_file { read write ioctl open };
-allow bootanim self:process execmem;
+# Text relocs
+#bootanim
+allow bootanim system_file:file execmod;
+#gralloc
+allow untrusted_app system_file:file execmod;
+#nfc
+allow nfc system_file:file execmod;
+#radio
+allow radio system_file:file execmod;
