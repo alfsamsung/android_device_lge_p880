@@ -111,6 +111,10 @@
     <!-- Does the notification LED support multiple colors? Used to decide if the used can change the colors -->
     <bool name="config_multiColorNotificationLed">false</bool>
 
+    <!-- Do the battery/notification LEDs support pulsing?
+         Used to decide if we show pulse settings -->
+    <bool name="config_ledCanPulse">false</bool>
+
     <!-- Is the battery LED intrusive? Used to decide if there should be a disable option -->
     <bool name="config_intrusiveBatteryLed">true</bool>
 
@@ -167,6 +171,16 @@
 
     <!--SIM does not save, but the voice mail number to be changed. -->
     <bool name="editable_voicemailnumber">true</bool>
+
+    <!-- Whether to enable Hardware FLP overlay which allows Hardware FLP to be
+         replaced by an app at run-time. When disabled, only the
+         config_hardwareFlpPackageName package will be searched for Hardware Flp,
+         otherwise packages whose signature matches the signatures of
+         config_locationProviderPackageNames will be searched, and the service
+         with the highest version number will be picked. Anyone who wants to
+         disable the overlay mechanism can set it to false.
+         -->
+    <bool name="config_enableHardwareFlpOverlay" translatable="false">false</bool>
 
     <!-- Device configuration setting the minfree tunable in the lowmemorykiller in the kernel.
          A high value will cause the lowmemorykiller to fire earlier, keeping more memory
