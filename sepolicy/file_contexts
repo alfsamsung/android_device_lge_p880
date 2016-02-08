@@ -42,6 +42,8 @@
 
 /system/bin/lgdrmserver           u:object_r:drmserver_exec:s0
 /system/bin/nvcpud                u:object_r:NvCpuService_exec:s0
+/dev/min_online_cpus              u:object_r:sysfs_devices_system_cpu:s0
+/dev/max_online_cpus              u:object_r:sysfs_devices_system_cpu:s0
 /dev/cpu_freq_min                 u:object_r:sysfs_devices_system_cpu:s0
 /dev/cpu_freq_max                 u:object_r:sysfs_devices_system_cpu:s0
 /system/bin/lgsecclkserver        u:object_r:lgsecclk_exec:s0

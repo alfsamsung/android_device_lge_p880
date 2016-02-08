@@ -4,3 +4,9 @@ allow rild sysfs:file write;
 allow rild self:process execmem;
 allow rild block_device:dir search;
 allow rild net_radio_prop:property_service set;
+allow rild drmserver:binder call;
+allow rild servicemanager:binder call;
+
+allow servicemanager rild:dir search;
+allow servicemanager rild:file { read open };
+allow servicemanager rild:process getattr;
