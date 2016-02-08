@@ -116,7 +116,7 @@ PRODUCT_PACKAGES += \
 
 # Preload help lib for missing symbols
 PRODUCT_PACKAGES += \
-    libx3_misc
+    libx3_misc_cpp
 
 # P880 device libs
 PRODUCT_PACKAGES += \

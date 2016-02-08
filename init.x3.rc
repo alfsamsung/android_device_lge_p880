@@ -10,7 +10,7 @@ on early-init
 
 on init
     # Preload the misc old symbols
-    export LD_PRELOAD /system/lib/libx3_misc.so
+    export LD_PRELOAD /system/lib/libx3_misc_cpp.so
 
     # Put all cpu cores online
     chmod 0664 /sys/kernel/debug/tegra_hotplug/min_cpus
@@ -56,7 +56,7 @@ on fs
     # Create this file in case it doesn't exist, needed to switch wifi modes:
     write /data/misc/wifi/firmware_path ""
     chmod 0666 /data/misc/wifi/firmware_path
-    
+
     # Zram
     swapon_all fstab.x3
     write /proc/sys/vm/swappiness 70
@@ -214,9 +214,11 @@ on boot
     # Wifi: Disable the IPv6 of p2p0 interface
     write /proc/sys/net/ipv6/conf/p2p0/disable_ipv6 1
 
-    # ipconfig for wifi
-    touch /data/misc/wifi/ipconfig.txt
+    # config files for wifi
+    write /data/misc/wifi/ipconfig.txt ipconfig
+    write /data/misc/wifi/networkHistory.txt networkHistory
     chmod 0777 /data/misc/wifi/ipconfig.txt
+    chmod 0777 /data/misc/wifi/networkHistory.txt
 
     # didim
     chown system system /sys/class/graphics/fb0/device/smartdimmer/enable
