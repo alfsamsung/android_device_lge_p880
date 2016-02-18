@@ -20,10 +20,6 @@ PRODUCT_PROPERTY_OVERRIDES += \
 
 PRODUCT_BUILD_PROP_OVERRIDES += BUILD_UTC_DATE=0
 
-## Input-boost
-PRODUCT_COPY_FILES += \
-    $(LOCAL_PATH)/prebuilt/89input_boost:system/etc/init.d/89input_boost
-
 ## Recovery
 PRODUCT_COPY_FILES += \
     $(LOCAL_PATH)/prebuilt/postrecoveryboot.sh:recovery/root/sbin/postrecoveryboot.sh \
@@ -132,7 +128,8 @@ PRODUCT_PACKAGES += libstlport
 # P880 device libs
 PRODUCT_PACKAGES += \
     lights.x3 \
-    libstagefrighthw
+    libstagefrighthw \
+    power.tegra
 
 #Audio and misc
 PRODUCT_PACKAGES += \
