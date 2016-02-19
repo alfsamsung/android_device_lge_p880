@@ -10,10 +10,8 @@ on early-init
 
 on init
     # Preload the misc old symbols
-    export LD_PRELOAD /system/lib/libboringssl-compat.so:/system/lib/libx3_ril.so:/system/lib/libx3_misc_cpp.so:/system/lib/libx3_cam.so
-    #TODO LD_SHIM_LIBS needs bionic patch
-    # export LD_SHIM_LIBS /system/bin/rild|libx3_ril.so:/system/lib/libril.so|libx3_ril.so
-
+    export LD_PRELOAD /system/lib/libx3_misc_cpp.so
+    export LD_SHIM_LIBS /system/lib/libril.so|libx3_ril.so:/system/lib/lge-ril.so|libx3_ril.so:/system/lib/hw/camera.tegra.so|libx3_cam.so
 
     # Put all cpu cores online
     chmod 0664 /sys/kernel/debug/tegra_hotplug/min_cpus

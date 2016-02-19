@@ -119,8 +119,7 @@ PRODUCT_PACKAGES += \
     libGLESv2_tegra \
     libx3_ril \
     libx3_misc_cpp \
-    libx3_cam \
-    libboringssl-compat
+    libx3_cam
 
 # Libstlport needed by lib/libnvcap.so
 PRODUCT_PACKAGES += libstlport

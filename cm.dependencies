@@ -4,11 +4,5 @@
     "repository": "CyanogenMod/android_external_stlport",
     "target_path": "external/stlport",
     "revision": "cm-13.0"
-  },
-  {
-    "remote": "github",
-    "repository": "CyanogenMod/android_external_sony_boringssl-compat",
-    "target_path": "hardware/sony/boringssl-compat",
-    "revision": "cm-13.0"
   }
 ]
