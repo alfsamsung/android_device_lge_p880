@@ -119,6 +119,26 @@ public class X3RIL extends RIL implements CommandsInterface {
         send(rr);
     }
 
+    //Convert integer array of failed causeCode into a single integer.
+    @Override
+    protected Object
+    responseFailCause(Parcel p) {
+        int numInts;
+        int response[];
+
+        numInts = p.readInt();
+        response = new int[numInts];
+        for (int i = 0 ; i < numInts ; i++) {
+            response[i] = p.readInt();
+        }
+        LastCallFailCause failCause = new LastCallFailCause();
+        failCause.causeCode = response[0];
+        if (p.dataAvail() > 0) {
+          failCause.vendorCause = p.readString();
+        }
+        return failCause;
+    }
+
     static final int RIL_UNSOL_LGE_STK_PROACTIVE_SESSION_STATUS = 1041;
     static final int RIL_UNSOL_LGE_NETWORK_REGISTRATION_ERROR = 1047;
     static final int RIL_UNSOL_LGE_PBREADY = 1049;

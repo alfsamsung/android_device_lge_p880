@@ -9,7 +9,6 @@
 /dev/nvmap                        u:object_r:gpu_device:s0
 /dev/ttyHS1                       u:object_r:gps_device:s0
 /dev/ttyHS2                       u:object_r:hci_attach_dev:s0
-/dev/block/mmcblk0p7              u:object_r:radio_device:s0
 /dev/ttyACM0                      u:object_r:radio_device:s0
 /dev/pts[0-9]*                    u:object_r:radio_device:s0
 /dev/pts17                        u:object_r:gps_device:s0

@@ -67,7 +67,7 @@ ro.sys.fw.bg_apps_limit=22
 #ro.sys.fw.trim_cache_percent=40
 
 #Enable B service aging propagation on memory pressure.
-#ro.sys.fw.bservice_enable=true 
+ro.sys.fw.bservice_enable=true 
 
 #Audioflinger memory alloc multiplier #2, min=1 max=2
 af.fast_track_multiplier=1

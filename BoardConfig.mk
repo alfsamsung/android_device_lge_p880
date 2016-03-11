@@ -6,8 +6,8 @@ TARGET_BUILD_VARIANT := userdebug
 
 #GCC
 #TARGET_GCC_VERSION_EXP := 4.9-sm
-#KERNEL_TOOLCHAIN_PREFIX := arm-eabi-
-#KERNEL_TOOLCHAIN := $(ANDROID_BUILD_TOP)/prebuilts/gcc/$(HOST_OS)-x86/arm/arm-eabi-5.2-ub/bin/
+KERNEL_TOOLCHAIN_PREFIX := arm-eabi-
+KERNEL_TOOLCHAIN := $(ANDROID_BUILD_TOP)/prebuilts/gcc/$(HOST_OS)-x86/arm/arm-eabi-5.3-ub/bin/
 
 # Skip droiddoc build to save build time
 BOARD_SKIP_ANDROID_DOC_BUILD := true
@@ -15,6 +15,9 @@ DISABLE_DROIDDOC := true
 
 # Remove some stupid logging
 COMMON_GLOBAL_CFLAGS += -DSTOP_LOG_SPAM
+
+# Build with Clang by default
+USE_CLANG_PLATFORM_BUILD := true
 
 TARGET_SPECIFIC_HEADER_PATH += device/lge/p880/include
 
@@ -52,15 +55,13 @@ BOARD_SYSTEMIMAGE_JOURNAL_SIZE := 0
 BOARD_KERNEL_CMDLINE := androidboot.selinux=permissive androidboot.hardware=x3 androidboot.bootdevice=sdhci-tegra.3
 BOARD_KERNEL_BASE := 0x10000000
 BOARD_KERNEL_PAGESIZE := 2048
+TARGET_KERNEL_CONFIG := cyanogenmod_x3-light-MM_defconfig
 
 ifeq ($(TARGET_BUILD_VARIANT),user)
-TARGET_KERNEL_CONFIG := cyanogenmod_x3-light-MM_defconfig
 COMMON_GLOBAL_CFLAGS += -DALLOW_LOCAL_PROP_OVERRIDE=1 -DALLOW_DISABLE_SELINUX=1 -DALLOW_ADBD_ROOT=1
 WITH_DEXPREOPT := true
 DONT_DEXPREOPT_PREBUILTS := true
 WITH_DEXPREOPT_COMP := true
-else
-TARGET_KERNEL_CONFIG := cyanogenmod_x3-MM_defconfig
 endif
 
 # Recovery
@@ -68,7 +69,6 @@ BOARD_HAS_NO_SELECT_BUTTON := true
 BOARD_RECOVERY_SWIPE := true
 TARGET_RECOVERY_FSTAB = device/lge/p880/fstab.x3
 RECOVERY_FSTAB_VERSION = 2
-TARGET_RECOVERY_PRE_COMMAND := "/system/bin/setup-recovery"
 BOARD_CUSTOM_GRAPHICS := ../../../device/lge/p880/recovery-gfx.c
 BOARD_CUSTOM_RECOVERY_KEYMAPPING := ../../device/lge/p880/recovery-keys.c
 
@@ -127,16 +127,15 @@ COMMON_GLOBAL_CFLAGS += -DBOARD_CANT_REALLOCATE_OMX_BUFFERS
 # Marshmallow
 TARGET_NEEDS_TEXT_RELOCS_SUPPORT := true
 COMMON_GLOBAL_CFLAGS += -DDISABLE_ASHMEM_TRACKING
-## TODO: Do we need these??
-#TARGET_NO_SENSOR_PERMISSION_CHECK := true
-#TARGET_USE_COMPAT_GRALLOC_PERFORM := true
-#TARGET_REQUIRES_SYNCHRONOUS_SETSURFACE := true
 
 ## Radio fixes
 BOARD_RIL_CLASS := ../../../device/lge/p880/ril/
 
 # Override healthd HAL
 BOARD_HAL_STATIC_LIBRARIES := libhealthd.x3
+
+# Preload misc old symbols
+TARGET_LDPRELOAD += /system/lib/libx3_misc_cpp.so
 
 # Enable Minikin text layout engine (will be the default soon)
 USE_MINIKIN := true

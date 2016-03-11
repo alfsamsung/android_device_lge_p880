@@ -1,4 +1,4 @@
-From 7173e8b0aa5931bae8355d754cf18e22ef6c18b8 Mon Sep 17 00:00:00 2001
+From cc24fe5cb87b8aa7509c752bc56387648156a2ae Mon Sep 17 00:00:00 2001
 From: alfsamsung <alfsamsung@hotmail.com>
 Date: Wed, 31 Dec 2014 19:48:03 +0100
 Subject: [PATCH] libgui: Addb back getDisplayInfo for old MR0_CAMERA_BLOB
@@ -6,8 +6,8 @@ Subject: [PATCH] libgui: Addb back getDisplayInfo for old MR0_CAMERA_BLOB
 Signed-off-by: alfsamsung <alfsamsung@hotmail.com>
 ---
  include/gui/SurfaceComposerClient.h |  7 +++++++
- libs/gui/SurfaceComposerClient.cpp  | 37 ++++++++++++++++++++++++++++++++++++-
- 2 files changed, 43 insertions(+), 1 deletion(-)
+ libs/gui/SurfaceComposerClient.cpp  | 35 +++++++++++++++++++++++++++++++++++
+ 2 files changed, 42 insertions(+)
 
 diff --git a/include/gui/SurfaceComposerClient.h b/include/gui/SurfaceComposerClient.h
 index 9ec3f23..36a18df 100644
@@ -28,18 +28,9 @@ index 9ec3f23..36a18df 100644
      // surface creation / destruction
  
 diff --git a/libs/gui/SurfaceComposerClient.cpp b/libs/gui/SurfaceComposerClient.cpp
-index 82bdd6b..8ae985b 100644
+index 82bdd6b..a0cbf65 100644
 --- a/libs/gui/SurfaceComposerClient.cpp
 +++ b/libs/gui/SurfaceComposerClient.cpp
-@@ -475,7 +475,7 @@ void Composer::setDisplayProjection(const sp<IBinder>& token,
-     s.viewport = layerStackRect;
-     s.frame = displayRect;
-     s.what |= DisplayState::eDisplayProjectionChanged;
--    mForceSynchronous = true; // TODO: do we actually still need this?
-+//    mForceSynchronous = true; // TODO: do we actually still need this?
- }
- 
- void Composer::setDisplaySize(const sp<IBinder>& token, uint32_t width, uint32_t height) {
 @@ -486,6 +486,15 @@ void Composer::setDisplaySize(const sp<IBinder>& token, uint32_t width, uint32_t
      s.what |= DisplayState::eDisplaySizeChanged;
  }
@@ -48,8 +39,8 @@ index 82bdd6b..8ae985b 100644
 +    sp<ISurfaceComposer> sm(ComposerService::getComposerService());
 +    sp<IBinder> token(sm->getBuiltInDisplay(ISurfaceComposer::eDisplayIdMain));
 +    DisplayState& s(getDisplayStateLocked(token));
-+    s.orientation = orientation;
-+//    mForceSynchronous = true; // TODO: do we actually still need this?
++    s.orientation = static_cast<uint32_t>(orientation);
++    mForceSynchronous = true; // TODO: do we actually still need this?
 +    return NO_ERROR;
 +}
 +
@@ -70,13 +61,13 @@ index 82bdd6b..8ae985b 100644
 +ssize_t SurfaceComposerClient::getDisplayWidth(int32_t displayId) {
 +    DisplayInfo info;
 +    getDisplayInfo(getBuiltInDisplay(displayId), &info);
-+    return info.w;
++    return static_cast<int32_t>(info.w);
 +}
 +
 +ssize_t SurfaceComposerClient::getDisplayHeight(int32_t displayId) {
 +    DisplayInfo info;
 +    getDisplayInfo(getBuiltInDisplay(displayId), &info);
-+    return info.h;
++    return static_cast<int32_t>(info.h);
 +}
 +
 +ssize_t SurfaceComposerClient::getDisplayOrientation(int32_t displayId) {

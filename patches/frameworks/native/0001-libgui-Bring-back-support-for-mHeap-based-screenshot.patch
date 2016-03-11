@@ -1,4 +1,4 @@
-From 6b0f5f7db4922ceeb379247a0a7260aaeb8226b8 Mon Sep 17 00:00:00 2001
+From e3cace085b3b8569095b224bc883054904414eb5 Mon Sep 17 00:00:00 2001
 From: Ricardo Cerqueira <cyanogenmod@cerqueira.org>
 Date: Tue, 6 Aug 2013 16:11:06 +0100
 Subject: [PATCH] libgui: Bring back support for mHeap-based screenshots
@@ -20,13 +20,13 @@ Signed-off-by: alfsamsung <alfsamsung@hotmail.com>
 ---
  include/gui/ISurfaceComposer.h             |  15 +++
  include/gui/SurfaceComposerClient.h        |   6 ++
- libs/gui/Android.mk                        |   5 +
+ libs/gui/Android.mk                        |   4 +
  libs/gui/ISurfaceComposer.cpp              |  52 ++++++++++
  libs/gui/SurfaceComposerClient.cpp         |  26 +++++
  services/surfaceflinger/Android.mk         |   4 +
  services/surfaceflinger/SurfaceFlinger.cpp | 159 ++++++++++++++++++++++++++++-
  services/surfaceflinger/SurfaceFlinger.h   |  16 +++
- 8 files changed, 280 insertions(+), 3 deletions(-)
+ 8 files changed, 279 insertions(+), 3 deletions(-)
 
 diff --git a/include/gui/ISurfaceComposer.h b/include/gui/ISurfaceComposer.h
 index 6e3fc5a..f94fdbf 100644
@@ -86,23 +86,22 @@ index 4faebcb..66e69df 100644
      mutable sp<IGraphicBufferProducer> mProducer;
      CpuConsumer::LockedBuffer mBuffer;
 diff --git a/libs/gui/Android.mk b/libs/gui/Android.mk
-index cda11a9..577e73a 100644
+index cda11a9..f41f067 100644
 --- a/libs/gui/Android.mk
 +++ b/libs/gui/Android.mk
-@@ -92,6 +92,11 @@ ifeq ($(BOARD_EGL_SKIP_FIRST_DEQUEUE),true)
+@@ -92,6 +92,10 @@ ifeq ($(BOARD_EGL_SKIP_FIRST_DEQUEUE),true)
      LOCAL_CFLAGS += -DSURFACE_SKIP_FIRST_DEQUEUE
  endif
  
 +ifeq ($(BOARD_USE_MHEAP_SCREENSHOT),true)
 +    LOCAL_CFLAGS += -DUSE_MHEAP_SCREENSHOT
-+    LOCAL_CPPFLAGS += -Wno-sign-conversion
 +endif
 +
  ifeq ($(TARGET_BOARD_PLATFORM), tegra)
  	LOCAL_CFLAGS += -DDONT_USE_FENCE_SYNC
  endif
 diff --git a/libs/gui/ISurfaceComposer.cpp b/libs/gui/ISurfaceComposer.cpp
-index 0ad6339..2f32c82 100644
+index 0ad6339..5b50906 100644
 --- a/libs/gui/ISurfaceComposer.cpp
 +++ b/libs/gui/ISurfaceComposer.cpp
 @@ -98,6 +98,33 @@ public:
@@ -122,16 +121,16 @@ index 0ad6339..2f32c82 100644
 +        data.writeInterfaceToken(ISurfaceComposer::getInterfaceDescriptor());
 +        data.writeStrongBinder(display);
 +        data.write(sourceCrop);
-+        data.writeInt32(reqWidth);
-+        data.writeInt32(reqHeight);
-+        data.writeInt32(minLayerZ);
-+        data.writeInt32(maxLayerZ);
++        data.writeUint32(reqWidth);
++        data.writeUint32(reqHeight);
++        data.writeUint32(minLayerZ);
++        data.writeUint32(maxLayerZ);
 +        data.writeInt32(static_cast<int32_t>(useIdentityTransform));
 +        data.writeInt32(static_cast<int32_t>(rotation));
 +        remote()->transact(BnSurfaceComposer::CAPTURE_SCREEN_DEPRECATED, data, &reply);
 +        *heap = interface_cast<IMemoryHeap>(reply.readStrongBinder());
-+        *width = reply.readInt32();
-+        *height = reply.readInt32();
++        *width = reply.readUint32();
++        *height = reply.readUint32();
 +        return reply.readInt32();
 +    }
 +#endif
@@ -149,12 +148,12 @@ index 0ad6339..2f32c82 100644
 +            sp<IBinder> display = data.readStrongBinder();
 +            Rect sourceCrop;
 +            data.read(sourceCrop);
-+            uint32_t reqWidth = data.readInt32();
-+            uint32_t reqHeight = data.readInt32();
-+            uint32_t minLayerZ = data.readInt32();
-+            uint32_t maxLayerZ = data.readInt32();
++            uint32_t reqWidth = data.readUint32();
++            uint32_t reqHeight = data.readUint32();
++            uint32_t minLayerZ = data.readUint32();
++            uint32_t maxLayerZ = data.readUint32();
 +            bool useIdentityTransform = static_cast<bool>(data.readInt32());
-+            uint32_t rotation = data.readInt32();
++            int32_t rotation = data.readInt32();
 +            sp<IMemoryHeap> heap;
 +            uint32_t w, h;
 +            status_t res = captureScreen(display, &heap, &w, &h,
@@ -162,8 +161,8 @@ index 0ad6339..2f32c82 100644
 +                    useIdentityTransform,
 +                    static_cast<ISurfaceComposer::Rotation>(rotation));
 +            reply->writeStrongBinder(IInterface::asBinder(heap));
-+            reply->writeInt32(w);
-+            reply->writeInt32(h);
++            reply->writeUint32(w);
++            reply->writeUint32(h);
 +            reply->writeInt32(res);
 +            return NO_ERROR;
 +        }
@@ -172,7 +171,7 @@ index 0ad6339..2f32c82 100644
              CHECK_INTERFACE(ISurfaceComposer, data, reply);
              sp<IBinder> display = data.readStrongBinder();
 diff --git a/libs/gui/SurfaceComposerClient.cpp b/libs/gui/SurfaceComposerClient.cpp
-index c56b0ee..9fd0e6b 100644
+index 7a7647a..b4f0728 100644
 --- a/libs/gui/SurfaceComposerClient.cpp
 +++ b/libs/gui/SurfaceComposerClient.cpp
 @@ -834,6 +834,14 @@ status_t ScreenshotClient::capture(
