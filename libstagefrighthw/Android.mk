@@ -19,7 +19,8 @@ include $(CLEAR_VARS)
 
 LOCAL_SRC_FILES := NVOMXMaster.cpp NVOMXPlugin.cpp
 
-LOCAL_CFLAGS := $(PV_CFLAGS_MINUS_VISIBILITY)
+LOCAL_CFLAGS += $(PV_CFLAGS_MINUS_VISIBILITY) -Werror
+LOCAL_CPPFLAGS += -Werror
 
 LOCAL_C_INCLUDES:= \
     $(TOP)/frameworks/native/include/media/openmax \
@@ -35,4 +36,3 @@ LOCAL_SHARED_LIBRARIES := \
 LOCAL_MODULE := libstagefrighthw
 
 include $(BUILD_SHARED_LIBRARY)
- 

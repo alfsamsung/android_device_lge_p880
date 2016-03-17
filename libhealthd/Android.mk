@@ -17,6 +17,7 @@
 LOCAL_PATH := $(call my-dir)
 
 include $(CLEAR_VARS)
+LOCAL_CPPFLAGS += -Werror
 LOCAL_SRC_FILES := healthd_board_x3.cpp
 LOCAL_MODULE := libhealthd.x3
 LOCAL_C_INCLUDES := system/core/healthd

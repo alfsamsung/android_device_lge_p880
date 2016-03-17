@@ -66,6 +66,7 @@ LOCAL_MODULE_OWNER := nvidia
 include $(BUILD_PREBUILT)
 
 include $(CLEAR_VARS)
+LOCAL_CFLAGS += -Werror
 LOCAL_SHARED_LIBRARIES := liblog libcutils libutils libnvos
 LOCAL_SRC_FILES := libdgv1.c
 LOCAL_MODULE := libdgv1
