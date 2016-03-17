@@ -16,6 +16,7 @@
 
 #include <errno.h>
 #include <string.h>
+#include <stdlib.h>
 
 #include <hardware/hardware.h>
 #include <hardware/nfc.h>
@@ -104,7 +105,8 @@ static uint8_t pn544_eedata_settings[][4] = {
 };
 
 static int pn544_close(hw_device_t *dev) {
-    free(dev);
+    if (dev)
+        free(dev);
 
     return 0;
 }
@@ -129,7 +131,7 @@ static int nfc_open(const hw_module_t* module, const char* name,
         dev->device_node = "/dev/pn544";
         dev->enable_i2c_workaround = 1;
         dev->i2c_device_address = 0x51;
-        *device = (hw_device_t*) dev;
+        *device = (hw_device_t*)dev;
         return 0;
     } else {
         return -EINVAL;
