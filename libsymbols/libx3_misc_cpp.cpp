@@ -14,9 +14,6 @@
  * limitations under the License.
  */
 
-#include <media/stagefright/MediaBuffer.h>
-#include <media/stagefright/MediaBufferGroup.h>
-
 #include <system/window.h>
 #include <ui/PixelFormat.h>
 #include <ui/Rect.h>
@@ -60,14 +57,6 @@ extern "C" {
     void _ZN7android12MemoryDealerC2EjPKcj(void* obj, size_t size, const char* name, uint32_t flags);
     void _ZN7android12MemoryDealerC1EjPKc(void* obj, size_t size, const char* name) {
         _ZN7android12MemoryDealerC2EjPKcj(obj, size, name, 0);
-    }
-// ---------------------------------------------------------------------------
-
-    //Needed by libwvm.so
-    //LEGACY_ACQUIRE_BUFFER_SYMBOL //libstagefright
-    status_t _ZN7android16MediaBufferGroup14acquire_bufferEPPNS_11MediaBufferE(
-        MediaBufferGroup* group, MediaBuffer **out) {
-            return group->acquire_buffer(out, false);
     }
 // ---------------------------------------------------------------------------
 

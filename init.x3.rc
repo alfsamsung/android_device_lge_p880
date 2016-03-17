@@ -10,7 +10,7 @@ on early-init
 
 on init
     # Shim load misc old symbols
-    export LD_SHIM_LIBS /system/lib/libril.so|libx3_ril.so:/system/lib/lge-ril.so|libx3_ril.so:/system/lib/hw/camera.tegra.so|libx3_cam.so
+    export LD_SHIM_LIBS /system/lib/libril.so|libx3_ril.so:/system/lib/lge-ril.so|libx3_ril.so:/system/lib/hw/camera.tegra.so|libx3_cam.so:/system/lib/hw/sensors.tegra.so|libx3_cam.so:/system/vendor/lib/libwvm.so|libx3_cam.so:/system/lib/hw/audio_policy.tegra.so|libx3_cam.so
 
     # Put all cpu cores online
     chmod 0664 /sys/kernel/debug/tegra_hotplug/min_cpus
