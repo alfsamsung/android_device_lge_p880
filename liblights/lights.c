@@ -22,11 +22,9 @@
 #include <cutils/log.h>
 
 #include <errno.h>
-#include <fcntl.h>
-#include <stdio.h>
 #include <string.h>
-#include <sys/types.h>
-#include <sys/stat.h>
+#include <pthread.h>
+#include <stdlib.h>
 
 /******************************************************************************/
 
@@ -40,22 +38,17 @@ static int g_notifications_on = 0;
 static int
 write_int(char const* path, int value)
 {
-    static int already_warned = 0;
-    int fd = open(path, O_RDWR);
+    FILE *fd;
 
-    if (fd <= 0) {
-        if (!already_warned) {
-            ALOGE("write_int failed to open %s\n", path);
-            already_warned = 1;
-        }
+    fd = fopen(path, "w+");
+    if (fd) {
+        int bytes = fprintf(fd, "%d", value);
+        fclose(fd);
+        return (bytes < 0 ? bytes : 0);
+    } else {
+        ALOGE("write_int failed to open %s\n", path);
         return -errno;
     }
-
-    char buffer[16];
-    int bytes = sprintf(buffer, "%d\n", value);
-    int written = write(fd, buffer, bytes);
-    close(fd);
-    return written == bytes ? 0 : -errno;
 }
 
 static int
@@ -75,6 +68,9 @@ static int
 set_light_backlight(struct light_device_t *dev,
         struct light_state_t const *state)
 {
+    if (!dev)
+        return -1;
+
     return write_int(BACKLIGHT_FILE, rgb_to_brightness(state->color));
 }
 
@@ -96,6 +92,9 @@ static int
 set_light_buttons(struct light_device_t *dev,
         struct light_state_t const *state)
 {
+    if (!dev)
+        return -1;
+
     g_buttons_on = rgb_to_bool(state->color);
     return update_buttons_state();
 }
@@ -104,6 +103,9 @@ static int
 set_light_battery(struct light_device_t *dev,
         struct light_state_t const *state)
 {
+    if (!dev)
+        return -1;
+
     g_battery_on = rgb_to_bool(state->color);
     return update_buttons_state();
 }
@@ -112,13 +114,17 @@ static int
 set_light_notifications(struct light_device_t *dev,
         struct light_state_t const *state)
 {
+    if (!dev)
+        return -1;
+
     g_notifications_on = rgb_to_bool(state->color);
     return update_buttons_state();
 }
 
 static int close_lights(struct light_device_t *dev)
 {
-    free(dev);
+    if (dev)
+        free(dev);
 
     return 0;
 }
@@ -144,8 +150,10 @@ open_lights(const struct hw_module_t* module, char const* name,
 
     ALOGI("open_lights(%s)\n", name);
 
-    struct light_device_t *dev = malloc(sizeof(struct light_device_t));
-    memset(dev, 0, sizeof(*dev));
+    struct light_device_t *dev = calloc( 1, sizeof(struct light_device_t));
+
+    if(!dev)
+        return -ENOMEM;
 
     dev->common.tag = HARDWARE_DEVICE_TAG;
     dev->common.version = 0;
