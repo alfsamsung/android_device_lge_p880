@@ -195,6 +195,10 @@
     <!-- The restoring is handled by modem if it is true -->
     <bool translatable="false" name="skip_restoring_network_selection">true</bool>
 
+    <!-- Older rotation sensors are not setting event.timestamp correctly. Setting to
+          true will use SystemClock.elapsedRealtimeNanos() to set timestamp. -->
+    <bool name="config_useSystemClockforRotationSensor">true</bool>
+
     <!-- Whether to enable Hardware FLP overlay which allows Hardware FLP to be
          replaced by an app at run-time. When disabled, only the
          config_hardwareFlpPackageName package will be searched for Hardware Flp,
