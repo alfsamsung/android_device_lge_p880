@@ -39,14 +39,14 @@ extern "C" {
 // ---------------------------------------------------------------------------
 
     //Needed by liblgdrm.so and libnvcpud.so getCallingUid() const //libbinder
-    //Note Lollipo uses int and MM uses pid_t and  uid_t
-    pid_t _ZNK7android14IPCThreadState13getCallingUidEv();
+    //Note Lollipo uses int and MM uses uid_t and pid_t
+    uid_t _ZNK7android14IPCThreadState13getCallingUidEv();
     int _ZN7android14IPCThreadState13getCallingUidEv() {
         return _ZNK7android14IPCThreadState13getCallingUidEv();
     }
 
     //Needed by libnvcpud.so: getCallingPid() //libbinder
-    uid_t _ZNK7android14IPCThreadState13getCallingPidEv();
+    pid_t _ZNK7android14IPCThreadState13getCallingPidEv();
     int _ZN7android14IPCThreadState13getCallingPidEv() {
         return _ZNK7android14IPCThreadState13getCallingPidEv();
     }
