@@ -44,6 +44,8 @@ on fs
     # Zram
     swapon_all fstab.x3
     write /proc/sys/vm/swappiness 70
+    # Reduce swapping pages #org:3
+    write /proc/sys/vm/page-cluster 1
 
 on post-fs-data
     # create directory for lgdrm
@@ -218,6 +220,11 @@ on boot
     write /sys/block/mmcblk0/queue/read_ahead_kb 2048
     write /sys/block/mmcblk1/queue/read_ahead_kb 1024
 
+    # Flash storage isn't a good entropy source, and only causes
+    # locking overhead in the kernel. Turn it off.
+    write /sys/block/mmcblk0/queue/add_random 0
+    write /sys/block/mmcblk1/queue/add_random 0
+
     # KSM
     chown root system /sys/kernel/mm/ksm/run
     chmod 0664 /sys/kernel/mm/ksm/run
@@ -258,7 +265,6 @@ service nvcpud /system/bin/nvcpud
     class main
     user root
     group root
-    oneshot
 
 service lgsecclk /system/bin/lgsecclkserver
     class main
