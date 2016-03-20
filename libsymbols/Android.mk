@@ -22,12 +22,10 @@ include $(BUILD_SHARED_LIBRARY)
 #Camera
 include $(CLEAR_VARS)
 LOCAL_CPPFLAGS += -Werror
-LOCAL_C_INCLUDES += \
-        $(TARGET_OUT_INTERMEDIATES)/KERNEL_OBJ/usr/include \
-        external/safe-iop/include
+LOCAL_C_INCLUDES += $(TARGET_OUT_INTERMEDIATES)/KERNEL_OBJ/usr/include
 
 LOCAL_ADDITIONAL_DEPENDENCIES := $(TARGET_OUT_INTERMEDIATES)/KERNEL_OBJ/usr
-LOCAL_SRC_FILES := gui/SensorManager.cpp TegraVectorImpl.cpp libx3_mediabuffer.cpp
+LOCAL_SRC_FILES := gui/SensorManager.cpp libx3_mediabuffer.cpp
 
 LOCAL_SHARED_LIBRARIES := \
     libbinder libcutils libgui libhardware liblog libsync libui libutils libstagefright

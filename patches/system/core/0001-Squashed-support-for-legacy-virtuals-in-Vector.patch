@@ -1,0 +1,126 @@
+From 7f2de817a5f2520b2e0bb56074c0a620e779a5d2 Mon Sep 17 00:00:00 2001
+From: Dave Burke <daveburke@google.com>
+Date: Wed, 24 Oct 2012 17:30:31 -0700
+Subject: [PATCH] Squashed support for legacy virtuals in Vector<>
+
+commit 04e5e3b697caa1f47c89439415ddd870b3489a8f
+Author: Dave Burke <daveburke@google.com>
+Date:   Wed Oct 24 17:30:31 2012 -0700
+
+    Revert "Revert "put back the unused virtuals in Vector<>""
+
+    This reverts commit 225c66a48cdc3acef21ee380dc134449749d3cb3
+
+    Change-Id: If31a04b81052cbc7dd7bf237c07107c33066d03d
+
+    Conditionally Revert "put back the unused virtuals in Vector<>"
+
+    These symbols are needed for MR2 camera.tegra and other blobs,
+    but they conflict with KK blobs so define it for devices that
+    need it by setting COMMON_GLOBAL_CFLAGS += -DNEEDS_VECTORIMPL_SYMBOLS
+
+    Change-Id: I59e66074526f013918a29c3afc10e52b9812778c
+
+commit 1ff785445828a9a40138d67e1de2a4fbae9680e9
+Author: Arne Coucheron <arco68@gmail.com>
+Date:   Wed Dec 3 06:14:55 2014 +0100
+
+    libutils: Properly #ifdef NEEDS_VECTORIMPL_SYMBOLS
+
+     * Compile error might occur otherwise
+
+    Change-Id: I982e5f72ea4e84594e415394cceed44f90045526
+
+Change-Id: I214c5c069173db842305d39a58f3c8d998e00930
+---
+ include/utils/VectorImpl.h | 26 +++++++++++++++++++++++++-
+ libutils/VectorImpl.cpp    | 22 ++++++++++++++++++++++
+ 2 files changed, 47 insertions(+), 1 deletion(-)
+
+diff --git a/include/utils/VectorImpl.h b/include/utils/VectorImpl.h
+index 21ad71c..88c3a05 100644
+--- a/include/utils/VectorImpl.h
++++ b/include/utils/VectorImpl.h
+@@ -105,7 +105,19 @@ protected:
+     virtual void            do_splat(void* dest, const void* item, size_t num) const = 0;
+     virtual void            do_move_forward(void* dest, const void* from, size_t num) const = 0;
+     virtual void            do_move_backward(void* dest, const void* from, size_t num) const = 0;
+-    
++
++#ifdef NEEDS_VECTORIMPL_SYMBOLS
++    // take care of FBC...
++    virtual void            reservedVectorImpl1();
++    virtual void            reservedVectorImpl2();
++    virtual void            reservedVectorImpl3();
++    virtual void            reservedVectorImpl4();
++    virtual void            reservedVectorImpl5();
++    virtual void            reservedVectorImpl6();
++    virtual void            reservedVectorImpl7();
++    virtual void            reservedVectorImpl8();
++#endif
++
+ private:
+         void* _grow(size_t where, size_t amount);
+         void  _shrink(size_t where, size_t amount);
+@@ -156,6 +168,18 @@ public:
+ protected:
+     virtual int             do_compare(const void* lhs, const void* rhs) const = 0;
+ 
++#ifdef NEEDS_VECTORIMPL_SYMBOLS
++    // take care of FBC...
++    virtual void            reservedSortedVectorImpl1();
++    virtual void            reservedSortedVectorImpl2();
++    virtual void            reservedSortedVectorImpl3();
++    virtual void            reservedSortedVectorImpl4();
++    virtual void            reservedSortedVectorImpl5();
++    virtual void            reservedSortedVectorImpl6();
++    virtual void            reservedSortedVectorImpl7();
++    virtual void            reservedSortedVectorImpl8();
++#endif
++
+ private:
+             ssize_t         _indexOrderOf(const void* item, size_t* order = 0) const;
+ 
+diff --git a/libutils/VectorImpl.cpp b/libutils/VectorImpl.cpp
+index de65a6c..ffd552b 100644
+--- a/libutils/VectorImpl.cpp
++++ b/libutils/VectorImpl.cpp
+@@ -552,6 +552,17 @@ void VectorImpl::_do_move_backward(void* dest, const void* from, size_t num) con
+     do_move_backward(dest, from, num);
+ }
+ 
++#ifdef NEEDS_VECTORIMPL_SYMBOLS
++void VectorImpl::reservedVectorImpl1() { }
++void VectorImpl::reservedVectorImpl2() { }
++void VectorImpl::reservedVectorImpl3() { }
++void VectorImpl::reservedVectorImpl4() { }
++void VectorImpl::reservedVectorImpl5() { }
++void VectorImpl::reservedVectorImpl6() { }
++void VectorImpl::reservedVectorImpl7() { }
++void VectorImpl::reservedVectorImpl8() { }
++#endif
++
+ /*****************************************************************************/
+ 
+ SortedVectorImpl::SortedVectorImpl(size_t itemSize, uint32_t flags)
+@@ -667,6 +678,17 @@ ssize_t SortedVectorImpl::remove(const void* item)
+     return i;
+ }
+ 
++#ifdef NEEDS_VECTORIMPL_SYMBOLS
++void SortedVectorImpl::reservedSortedVectorImpl1() { };
++void SortedVectorImpl::reservedSortedVectorImpl2() { };
++void SortedVectorImpl::reservedSortedVectorImpl3() { };
++void SortedVectorImpl::reservedSortedVectorImpl4() { };
++void SortedVectorImpl::reservedSortedVectorImpl5() { };
++void SortedVectorImpl::reservedSortedVectorImpl6() { };
++void SortedVectorImpl::reservedSortedVectorImpl7() { };
++void SortedVectorImpl::reservedSortedVectorImpl8() { };
++#endif
++
+ /*****************************************************************************/
+ 
+ }; // namespace android
+-- 
+1.9.1
+
