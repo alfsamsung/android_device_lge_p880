@@ -16,6 +16,10 @@ DISABLE_DROIDDOC := true
 # Remove some stupid logging
 COMMON_GLOBAL_CFLAGS += -DSTOP_LOG_SPAM
 
+# Art tuning
+ART_BUILD_TARGET_DEBUG := false
+ART_USE_OPTIMIZING_COMPILER := true
+
 # Build with Clang by default
 USE_CLANG_PLATFORM_BUILD := true
 
