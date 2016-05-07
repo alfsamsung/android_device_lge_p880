@@ -21,7 +21,7 @@ ART_BUILD_TARGET_DEBUG := false
 ART_USE_OPTIMIZING_COMPILER := true
 
 # Build with Clang by default
-USE_CLANG_PLATFORM_BUILD := true
+#USE_CLANG_PLATFORM_BUILD := true
 
 TARGET_SPECIFIC_HEADER_PATH += device/lge/p880/include
 
