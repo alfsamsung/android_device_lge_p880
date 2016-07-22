@@ -16,7 +16,7 @@
 
 package org.cyanogenmod.hardware;
 
-import org.cyanogenmod.hardware.util.FileUtils;
+import org.cyanogenmod.internal.util.FileUtils;
 
 /**
  * NVIDIA SmartDimmer adaptive backlight implementation
@@ -29,19 +29,11 @@ public class AdaptiveBacklight {
             "/sys/class/graphics/fb0/device/smartdimmer/enable";
 
     public static boolean isSupported() {
-        return true;
+        return FileUtils.isFileWritable(SMARTDIMMER_SYSFS);
     }
 
     public static boolean isEnabled() {
-        try {
-            String value = FileUtils.readOneLine(SMARTDIMMER_SYSFS);
-            if (value == null) {
-                return false;
-            }
-            return Integer.parseInt(value) == 1;
-        } catch (NumberFormatException nfex) {
-            return false;
-        }
+        return FileUtils.readOneLine(SMARTDIMMER_SYSFS).equals("0");
     }
 
     public static boolean setEnabled(boolean status) {

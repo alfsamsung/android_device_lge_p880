@@ -16,13 +16,13 @@
 
 package org.cyanogenmod.hardware;
 
-import org.cyanogenmod.hardware.util.FileUtils;
+import org.cyanogenmod.internal.util.FileUtils;
 
 public class DisplayColorCalibration {
     private static final String GAMMA_TUNING_FILE = "/sys/devices/platform/spi_tegra.4/spi4.2/gamma_tuning";
 
     public static boolean isSupported() {
-        return true;
+        return FileUtils.isFileWritable(GAMMA_TUNING_FILE);
     }
 
     public static int getMaxValue()  {
