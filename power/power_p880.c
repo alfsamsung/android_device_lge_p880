@@ -42,6 +42,7 @@
 
 static pthread_mutex_t lock = PTHREAD_MUTEX_INITIALIZER;
 static int boostpulse_fd = -1;
+static int boostcpus_fd = -1;
 
 static int current_power_profile = -1;
 static int requested_power_profile = -1;
@@ -110,6 +111,17 @@ static int boostpulse_open()
     return boostpulse_fd;
 }
 
+static int boostcpus_open()
+{
+    pthread_mutex_lock(&lock);
+    if (boostcpus_fd < 0) {
+        boostcpus_fd = open(BOOST_PATH "boost_cpus", O_WRONLY);
+    }
+    pthread_mutex_unlock(&lock);
+
+    return boostcpus_fd;
+}
+
 static void apply_power_profile(int profile)
 {
     if (!is_profile_valid(profile)) {
@@ -121,6 +133,8 @@ static void apply_power_profile(int profile)
 
     sysfs_write_int(BOOST_PATH "boost_freq",
                     profiles[profile].boost_freq);
+    sysfs_write_int(BOOST_PATH "boost_cpus",
+                    profiles[profile].boost_cpus);
     sysfs_write_int(BOOST_PATH "boost_time",
                     profiles[profile].boost_time);
     sysfs_write_int(INTERACTIVE_PATH "go_maxspeed_load",
@@ -199,17 +213,36 @@ static void power_hint(__attribute__((unused)) struct power_module *module,
 
     switch (hint) {
     case POWER_HINT_LAUNCH_BOOST:
+        if (!is_profile_valid(current_power_profile)) {
+            ALOGD("%s: no power profile selected yet", __func__);
+            return;
+        }
+
+        if (!profiles[current_power_profile].boost_cpus)
+            return;
+
+        if (boostcpus_open() >= 0) {
+            snprintf(buf, sizeof(buf), "%d", 
+                (profiles[current_power_profile].boost_cpus));
+            len = write(boostcpus_fd, &buf, sizeof(buf));
+            if (len < 0) {
+                strerror_r(errno, buf, sizeof(buf));
+                ALOGE("Error writing to boostcpus: %s\n", buf);
+
+                pthread_mutex_lock(&lock);
+                close(boostcpus_fd);
+                boostcpus_fd = -1;
+                pthread_mutex_unlock(&lock);
+            }
+        }
+    case POWER_HINT_INTERACTION:
     case POWER_HINT_CPU_BOOST:
         if (!is_profile_valid(current_power_profile)) {
             ALOGD("%s: no power profile selected yet", __func__);
             return;
         }
 
-        if (!profiles[current_power_profile].boost_time)
-            return;
-
-        // break out early if governor is not interactive
-        if (!check_governor())
+        if (!profiles[current_power_profile].boost_freq)
             return;
 
         if (boostpulse_open() >= 0) {

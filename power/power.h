@@ -26,6 +26,7 @@ enum {
 typedef struct governor_settings {
     int is_interactive;
     int boost_freq; //620000kHZ
+    int boost_cpus; //0-4
     int boost_time; //400msec
     int go_maxspeed_load;
     int go_maxspeed_load_off;
@@ -43,6 +44,7 @@ typedef struct governor_settings {
 static power_profile profiles[PROFILE_MAX] = {
     [PROFILE_POWER_SAVE] = {
         .boost_freq = 0,
+        .boost_cpus = 0,
         .boost_time = 0,
         .go_maxspeed_load = 99,
         .go_maxspeed_load_off = 110,
@@ -51,14 +53,15 @@ static power_profile profiles[PROFILE_MAX] = {
         .io_is_busy = 0,
         .min_sample_time = 20000,
         .core_bias = 2,
-        .balance_level = 90,
+        .balance_level = 85,
         .down_delay = 300,
         .lm3533_bl_hvled = 1,
         .sched_mc_power_savings = 2,
     },
     [PROFILE_BIAS_POWER_SAVE] = {
         .boost_freq = 0,
-        .boost_time = 0,
+        .boost_cpus = 2,
+        .boost_time = 300,
         .go_maxspeed_load = 98,
         .go_maxspeed_load_off = 110,
         .timer_rate = 45000,
@@ -66,14 +69,15 @@ static power_profile profiles[PROFILE_MAX] = {
         .io_is_busy = 1,
         .min_sample_time = 30000,
         .core_bias = 2,
-        .balance_level = 85,
+        .balance_level = 80,
         .down_delay = 400,
         .lm3533_bl_hvled = 2,
         .sched_mc_power_savings = 1,
     },
     [PROFILE_BALANCED] = {
         .boost_freq = 0,
-        .boost_time = 0,
+        .boost_cpus = 3,
+        .boost_time = 400,
         .go_maxspeed_load = 96,
         .go_maxspeed_load_off = 110,
         .timer_rate = 40000,
@@ -81,14 +85,15 @@ static power_profile profiles[PROFILE_MAX] = {
         .io_is_busy = 1,
         .min_sample_time = 40000,
         .core_bias = 1,
-        .balance_level = 80,
+        .balance_level = 72,
         .down_delay = 500,
         .lm3533_bl_hvled = 0,
         .sched_mc_power_savings = 1,
     },
     [PROFILE_BIAS_PERFORMANCE] = {
         .boost_freq = 620000,
-        .boost_time = 400,
+        .boost_cpus = 3,
+        .boost_time = 500,
         .go_maxspeed_load = 95,
         .go_maxspeed_load_off = 110,
         .timer_rate = 35000,
@@ -96,14 +101,15 @@ static power_profile profiles[PROFILE_MAX] = {
         .io_is_busy = 1,
         .min_sample_time = 50000,
         .core_bias = 1,
-        .balance_level = 80,
+        .balance_level = 70,
         .down_delay = 500,
         .lm3533_bl_hvled = 0,
         .sched_mc_power_savings = 1,
     },
     [PROFILE_HIGH_PERFORMANCE] = {
         .boost_freq = 760000,
-        .boost_time = 500,
+        .boost_cpus = 4,
+        .boost_time = 600,
         .go_maxspeed_load = 94,
         .go_maxspeed_load_off = 110,
         .timer_rate = 30000,
@@ -111,7 +117,7 @@ static power_profile profiles[PROFILE_MAX] = {
         .io_is_busy = 1,
         .min_sample_time = 60000,
         .core_bias = 0,
-        .balance_level = 75,
+        .balance_level = 65,
         .down_delay = 500,
         .lm3533_bl_hvled = 0,
         .sched_mc_power_savings = 0,
